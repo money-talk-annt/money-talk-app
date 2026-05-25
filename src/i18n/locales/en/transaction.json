@@ -1,0 +1,14 @@
+{
+  "title": "Transaction",
+  "add_transaction": "Add Transaction",
+  "income": "Income",
+  "expense": "Expense",
+  "date": "Date",
+  "amount": "Amount",
+  "category": "Category",
+  "description": "Description",
+  "filter": "Filter",
+  "sort": "Sort",
+  "all_transactions": "All Transactions",
+  "no_data": "No data"
+}

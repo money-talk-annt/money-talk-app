@@ -1,0 +1,14 @@
+{
+  "title": "Giao dịch",
+  "add_transaction": "Thêm giao dịch",
+  "income": "Thu nhập",
+  "expense": "Chi tiêu",
+  "date": "Ngày",
+  "amount": "Số tiền",
+  "category": "Danh mục",
+  "description": "Mô tả",
+  "filter": "Lọc",
+  "sort": "Sắp xếp",
+  "all_transactions": "Tất cả giao dịch",
+  "no_data": "Không có dữ liệu"
+}

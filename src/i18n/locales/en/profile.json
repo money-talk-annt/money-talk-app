@@ -1,0 +1,15 @@
+{
+  "title": "Profile",
+  "user_info": "User Information",
+  "email": "Email",
+  "phone": "Phone",
+  "address": "Address",
+  "preferences": "Preferences",
+  "currency": "Currency",
+  "theme": "Theme",
+  "notifications": "Notifications",
+  "privacy": "Privacy",
+  "logout": "Logout",
+  "account_settings": "Account Settings",
+  "change_password": "Change Password"
+}

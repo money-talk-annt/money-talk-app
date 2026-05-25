@@ -1,20 +1,26 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useFonts } from "expo-font";
+import Navigation from "./src/navigation";
+import { I18nextProvider } from "react-i18next";
+import i18next from "i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function App() {
+const App = () => {
+  const [loaded] = useFonts({
+    "Hanken-Regular": require("./assets/fonts/HankenGrotesk-Regular.ttf"),
+    "Hanken-Medium": require("./assets/fonts/HankenGrotesk-Medium.ttf"),
+    "Hanken-SemiBold": require("./assets/fonts/HankenGrotesk-SemiBold.ttf"),
+    "Hanken-Bold": require("./assets/fonts/HankenGrotesk-Bold.ttf"),
+  });
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <I18nextProvider i18n={i18next}>
+      <Navigation />
+    </I18nextProvider>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

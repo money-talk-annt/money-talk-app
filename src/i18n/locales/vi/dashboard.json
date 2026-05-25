@@ -1,0 +1,13 @@
+{
+  "totalBalance": "Tổng số dư",
+  "bank": "Ngân hàng",
+  "cash": "Tiền mặt",
+  "availableFunds": "Số tiền khả dụng",
+  "totalCash": "Tổng tiền mặt",
+  "addExpense": "Thêm chi tiêu",
+  "addIncome": "Thêm thu nhập",
+  "recentActivity": "Hoạt động gần đây",
+  "seeAll": "Xem tất cả",
+  "balance": "Số dư",
+  "eWallet": "Ví điện tử"
+}

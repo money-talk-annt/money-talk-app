@@ -1,0 +1,15 @@
+{
+  "title": "Hồ sơ",
+  "user_info": "Thông tin người dùng",
+  "email": "Email",
+  "phone": "Điện thoại",
+  "address": "Địa chỉ",
+  "preferences": "Tùy chọn",
+  "currency": "Tiền tệ",
+  "theme": "Chủ đề",
+  "notifications": "Thông báo",
+  "privacy": "Quyền riêng tư",
+  "logout": "Đăng xuất",
+  "account_settings": "Cài đặt tài khoản",
+  "change_password": "Thay đổi mật khẩu"
+}
