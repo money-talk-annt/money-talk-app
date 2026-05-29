@@ -1,0 +1,63 @@
+import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import { useWindowDimensions } from "react-native";
+import { useAddWalletForm } from "./useAddWalletForm";
+import { useCallback, useLayoutEffect, useState } from "react";
+import { WalletRepository } from "../../database/repository/wallet";
+import i18n from "../../i18n";
+import { CURRENCY } from "../../constants/currencey";
+import HeaderRight from '../../components/HeaderRight'
+
+export const useAddWallet = () => {
+  const walletRepo = new WalletRepository();
+  const { t } = useTranslation("addWallet");
+  const navigation = useNavigation<AppNavigation>();
+  const { height } = useWindowDimensions();
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid, isSubmitting },
+    watch,
+    reset,
+  } = useAddWalletForm(t);
+  const [ballance, setBallance] = useState<number>(0);
+
+  const language = i18n.language;
+
+  const currency = CURRENCY[language as keyof typeof CURRENCY].currency;
+
+  const handleSubmitForm = useCallback(
+    handleSubmit(({ walletName, balance, color, icon }) => {
+      let newBalance = balance?.replaceAll(".", "");
+      newBalance = newBalance?.replaceAll(",", ".");
+      walletRepo.add(walletName, Number(newBalance) || 0, color, icon);
+      reset();
+    }),
+    [],
+  );
+
+  const colorIcon = watch("color");
+  const walletName = watch("walletName");
+
+  const handleOnChangeBallance = useCallback((text: string) => {
+    let newBalance = text?.replaceAll(".", "");
+    newBalance = newBalance?.replaceAll(",", ".");
+
+    setBallance(Number(newBalance) ?? 0);
+  }, []);
+
+  return {
+    t,
+    height,
+    navigation,
+    control,
+    currency,
+    colorIcon,
+    ballance,
+    isValid,
+    isSubmitting,
+    walletName,
+    handleSubmitForm,
+    handleOnChangeBallance,
+  };
+};

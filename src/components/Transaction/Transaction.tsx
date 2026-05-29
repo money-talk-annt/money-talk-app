@@ -22,7 +22,7 @@ const TransactionComponent = ({
     return {
       prefix: typeTrasaction === "expense" ? "-" : "+",
       color:
-        typeTrasaction === "expense"
+        typeTrasaction === "income"
           ? "secondary"
           : ("error" as keyof typeof COLORS),
     };

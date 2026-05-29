@@ -21,6 +21,11 @@ export const TYPOGRAPHY = {
     fontFamily: FONT_MAP['400'],
     lineHeight: 26,
   },
+  bodyLgBold: {
+    fontSize: 18,
+    fontFamily: FONT_MAP['700'],
+    lineHeight: 26,
+  },
   bodyMdBold: {
     fontSize: 16,
     fontFamily: FONT_MAP['700'],

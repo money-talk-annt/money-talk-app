@@ -25,6 +25,8 @@ const BoxComponent = ({
   m,
   radius,
   shadow,
+  height,
+  width,
   style: styleProp,
   ...props
 }: BoxProps) => {
@@ -49,6 +51,8 @@ const BoxComponent = ({
           backgroundColor: COLORS[bgColor],
           borderRadius: radius ? RADIUS[radius] : undefined,
           ...(shadow ? SHADOW[shadow] : undefined),
+          height: height,
+          width: width,
         },
         styleProp,
       ]}

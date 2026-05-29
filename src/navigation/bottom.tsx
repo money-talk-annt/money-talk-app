@@ -1,22 +1,14 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Transaction from "../screens/Transaction";
 import Analysis from "../screens/Analysis";
-import Profile from "../screens/Profile";
 import { Ionicons } from "@expo/vector-icons";
-import { THEME } from "../theme";
 import Dashboard from "../screens/Dashboard";
+import { DashboardNested, ProfileNested } from "./nested";
 
 const BottomTab = createBottomTabNavigator({
-  screenOptions: {
-    headerTintColor: THEME.colors.primary,
-    headerTitleStyle: {
-      fontSize: 24,
-      fontWeight: "700",
-    },
-  },
   screens: {
     Dashboards: {
-      screen: Dashboard,
+      screen: DashboardNested,
       options: {
         headerShown: false,
         tabBarLabel: "Dashboard",
@@ -28,7 +20,7 @@ const BottomTab = createBottomTabNavigator({
     Transactions: {
       screen: Transaction,
       options: {
-        headerShown: false,
+        headerShown: true,
         tabBarLabel: "History",
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="book-outline" size={size} color={color} />
@@ -38,7 +30,7 @@ const BottomTab = createBottomTabNavigator({
     Analytics: {
       screen: Analysis,
       options: {
-        headerShown: false,
+        headerShown: true,
         tabBarLabel: "Analytics",
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="analytics" size={size} color={color} />
@@ -46,7 +38,7 @@ const BottomTab = createBottomTabNavigator({
       },
     },
     Profile: {
-      screen: Profile,
+      screen: ProfileNested,
       options: {
         headerShown: false,
         tabBarLabel: "Profile",

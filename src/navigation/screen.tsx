@@ -1,19 +1,20 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { BottomTab } from './bottom';
-import { THEME } from '../theme';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BottomTab } from "./bottom";
+import { THEME } from "../theme";
+import Wallet from "../screens/Wallet";
+import AddWallet from "../screens/AddWallet";
+import { Ionicons } from "@expo/vector-icons";
+import { Button } from "@react-navigation/elements";
 
 const RootStack = createNativeStackNavigator({
-    screens: {
-        Dashboard: {
-            screen: BottomTab,
-            options: {
-                headerShown: true,
-                headerTitle: 'Money Talk',
-                headerTintColor: THEME.colors.primary
-            },
-        },
-
-    }
+  screens: {
+    Home: {
+      options: {
+        headerShown: false,
+      },
+      screen: BottomTab,
+    },
+  },
 });
 
-export {RootStack}
+export { RootStack };

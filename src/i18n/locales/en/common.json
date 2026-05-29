@@ -1,22 +1,4 @@
 {
-  "app_name": "Money Talk",
-  "dashboard": "Dashboard",
-  "transaction": "Transaction",
-  "analysis": "Analysis",
-  "profile": "Profile",
-  "language": "Language",
-  "vietnamese": "Tiếng Việt",
-  "english": "English",
-  "settings": "Settings",
-  "home": "Home",
   "back": "Back",
-  "save": "Save",
-  "cancel": "Cancel",
-  "delete": "Delete",
-  "edit": "Edit",
-  "add": "Add",
-  "search": "Search",
-  "loading": "Loading...",
-  "error": "Error",
-  "success": "Success"
+  "add": "Add"
 }

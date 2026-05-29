@@ -1,0 +1,35 @@
+{
+    "title": "Thêm ví mới",
+
+    "card": {
+      "wallet_name_label": "Tên ví",
+      "wallet_name_placeholder": "Tên ví của bạn",
+      "current_balance": "Số dư hiện tại"
+    },
+
+    "form": {
+      "wallet_name": "Tên ví",
+      "wallet_name_input": "Ví chính, Tiết kiệm...",
+      "initial_balance": "Số dư ban đầu ({{currency}})",
+      "wallet_type": "Loại ví",
+      "theme_color": "Màu sắc chủ đạo",
+      "icon": "Biểu tượng"
+    },
+
+    "wallet_types": {
+      "cash": "Tiền mặt",
+      "bank": "Ngân hàng",
+      "e_wallet": "Ví điện tử",
+      "credit_card": "Thẻ tín dụng"
+    },
+
+    "actions": {
+      "save": "Lưu ví"
+    },
+
+    "errors":{
+      "required": "Trường này là bắt buộc",
+      "maxLength": "Độ dài tối đa là 20",
+      "number": "Trường này chỉ nhập số"
+    }
+}

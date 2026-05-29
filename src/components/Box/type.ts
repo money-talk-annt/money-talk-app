@@ -22,6 +22,8 @@ export interface BoxProps extends ViewProps {
   mb?: keyof typeof SPACING;
   m?: keyof typeof SPACING;
   p?: keyof typeof SPACING;
+  height?: number;
+  width?: number;
   bgColor?: keyof typeof COLORS;
   radius?: keyof typeof RADIUS;
   shadow?: keyof typeof SHADOW;
