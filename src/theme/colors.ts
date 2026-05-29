@@ -20,10 +20,14 @@ export const COLORS = {
   textSecondary: "#464555",
   textInverse: "#eaf1ff",
   textPrimary: "#4343D5",
+  textWhiteGray: '#DFDFFC',
+  textPlaceholder: 'rgb(107, 114, 128)',
 
   quickActionUnActive: "rgba(76, 67, 213, 0.1)",
 
   white: "#FFFFFF",
+
+  bgWallet: 'EFF6FF',
 
   //UI
   border: "#c7c4d7",

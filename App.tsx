@@ -2,7 +2,7 @@ import { useFonts } from "expo-font";
 import Navigation from "./src/navigation";
 import { I18nextProvider } from "react-i18next";
 import i18next from "i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { initDatabase } from "./src/database/initDatabase";
 
 const App = () => {
   const [loaded] = useFonts({
@@ -15,6 +15,8 @@ const App = () => {
   if (!loaded) {
     return null;
   }
+
+  initDatabase();
 
   return (
     <I18nextProvider i18n={i18next}>

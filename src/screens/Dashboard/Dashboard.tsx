@@ -139,7 +139,7 @@ function DashboardScreen() {
               icon="fast-food-outline"
               name="Bánh cuốn Bánh cuốn Bánh cuốn Bánh cuốn"
               category="Ăn uống"
-              typeTrasaction="expense"
+              typeTrasaction="income"
               money={300000000}
             />
 

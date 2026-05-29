@@ -1,22 +1,4 @@
 {
-  "app_name": "Money Talk",
-  "dashboard": "Bảng điều khiển",
-  "transaction": "Giao dịch",
-  "analysis": "Phân tích",
-  "profile": "Hồ sơ",
-  "language": "Ngôn ngữ",
-  "vietnamese": "Tiếng Việt",
-  "english": "English",
-  "settings": "Cài đặt",
-  "home": "Trang chủ",
   "back": "Quay lại",
-  "save": "Lưu",
-  "cancel": "Hủy",
-  "delete": "Xóa",
-  "edit": "Chỉnh sửa",
-  "add": "Thêm",
-  "search": "Tìm kiếm",
-  "loading": "Đang tải...",
-  "error": "Lỗi",
-  "success": "Thành công"
+  "add": "Thêm"
 }

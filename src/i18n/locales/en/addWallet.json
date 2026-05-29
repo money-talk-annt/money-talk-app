@@ -1,0 +1,35 @@
+{
+    "title": "New Wallet",
+
+    "card": {
+      "wallet_name_label": "Wallet Name",
+      "wallet_name_placeholder": "Your wallet name",
+      "current_balance": "Current Balance"
+    },
+
+    "form": {
+      "wallet_name": "Wallet Name",
+      "wallet_name_input": "Main wallet, Savings...",
+      "initial_balance": "Initial Balance ({{currency}})",
+      "wallet_type": "Wallet Type",
+      "theme_color": "Theme Color",
+      "icon": "Icon"
+    },
+
+    "wallet_types": {
+      "cash": "Cash",
+      "bank": "Bank",
+      "e_wallet": "E-wallet",
+      "credit_card": "Credit Card"
+    },
+
+    "actions": {
+      "save": "Save Wallet"
+    },
+
+    "errors":{
+      "requred": "This field is required",
+      "maxLength": "The max length is 20 characters",
+      "number": "This field is only number"
+    }
+}

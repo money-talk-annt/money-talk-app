@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageSwitcher from '../components/LanguageSwitcher';
+import { Button } from '@react-navigation/elements';
+import { PATHNAME } from '../constants/pathname';
 
 export default function Profile() {
   const { t } = useTranslation('profile');
@@ -29,8 +31,19 @@ export default function Profile() {
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>{t('currency')}</Text>
           <Text style={styles.settingValue}>USD ($)</Text>
+          <Button screen={PATHNAME.WALLET}>
+            Go to wallet
+          </Button>
         </View>
-        
+
+        <View style={styles.settingItem}>
+          <Text style={styles.settingLabel}>Add wallet</Text>
+          <Text style={styles.settingValue} />
+          <Button screen={PATHNAME.ADDWALLET}>
+            Add Wallet
+          </Button>
+        </View>
+
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>{t('theme')}</Text>
           <Text style={styles.settingValue}>Light</Text>
