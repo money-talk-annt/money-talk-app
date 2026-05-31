@@ -28,6 +28,7 @@ const BoxComponent = ({
   height,
   width,
   style: styleProp,
+  flex,
   ...props
 }: BoxProps) => {
   return (
@@ -48,6 +49,7 @@ const BoxComponent = ({
           ...(mr && { marginRight: SPACING[mr] }),
           ...(mt && { marginTop: SPACING[mt] }),
           ...(mb && { marginBottom: SPACING[mb] }),
+          ...(flex && {flex}),
           backgroundColor: COLORS[bgColor],
           borderRadius: radius ? RADIUS[radius] : undefined,
           ...(shadow ? SHADOW[shadow] : undefined),

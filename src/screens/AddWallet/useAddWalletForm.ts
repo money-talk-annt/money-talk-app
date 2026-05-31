@@ -2,6 +2,7 @@ import { TFunction } from "i18next";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { MONEY } from "../../constants/pattern";
 
 export const addWalletSchema = (t: TFunction<"addWallet">) =>
   z.object({
@@ -12,7 +13,7 @@ export const addWalletSchema = (t: TFunction<"addWallet">) =>
 
     balance: z
       .string()
-      .regex(/^\d{1,3}(\.\d{3})*(,\d+)?$/, t("errors.number"))
+      .regex(MONEY, t("errors.number"))
       .optional(),
     color: z.string(),
     icon: z.string(),

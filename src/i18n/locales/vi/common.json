@@ -1,4 +1,20 @@
 {
   "back": "Quay lại",
-  "add": "Thêm"
+  "add": "Thêm",
+  "categories": {
+    "food": "Ăn uống",
+    "transport": "Di chuyển",
+    "shopping": "Mua sắm",
+    "home": "Nhà cửa",
+    "health": "Sức khỏe",
+    "coffee": "Cà phê",
+    "other": "Khác",
+    "salary": "Lương",
+    "gift": "Thưởng",
+    "refund": "Hoàn tiền",
+    "business": "Kinh doanh",
+    "freelance": "Freelance",
+    "savingsInterest":"Lãi tiết kiệm",
+    "sale": "Bán hàng"
+  }
 }

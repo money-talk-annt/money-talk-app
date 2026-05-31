@@ -6,7 +6,8 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { WalletRepository } from "../../database/repository/wallet";
 import i18n from "../../i18n";
 import { CURRENCY } from "../../constants/currencey";
-import HeaderRight from '../../components/HeaderRight'
+import HeaderRight from "../../components/HeaderRight";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const useAddWallet = () => {
   const walletRepo = new WalletRepository();
@@ -21,6 +22,7 @@ export const useAddWallet = () => {
     reset,
   } = useAddWalletForm(t);
   const [ballance, setBallance] = useState<number>(0);
+  const {bottom} = useSafeAreaInsets()
 
   const language = i18n.language;
 
@@ -45,6 +47,12 @@ export const useAddWallet = () => {
 
     setBallance(Number(newBalance) ?? 0);
   }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: t("title"),
+    });
+  }, [navigation, t]);
 
   return {
     t,

@@ -3,12 +3,13 @@ import { FlexProps } from "./type";
 import { View } from "react-native";
 
 const FlexComponent = ({
-  direction = 'row',
+  direction = "row",
   justify,
   align,
   gap,
   children,
   style,
+  ...props
 }: FlexProps) => {
   return (
     <View
@@ -19,10 +20,11 @@ const FlexComponent = ({
           justifyContent: justify,
           alignItems: align,
           gap: gap,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
         },
         style,
       ]}
+      {...props}
     >
       {children}
     </View>

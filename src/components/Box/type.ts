@@ -27,4 +27,5 @@ export interface BoxProps extends ViewProps {
   bgColor?: keyof typeof COLORS;
   radius?: keyof typeof RADIUS;
   shadow?: keyof typeof SHADOW;
+  flex?: number
 }

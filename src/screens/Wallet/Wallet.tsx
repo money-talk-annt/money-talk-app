@@ -2,19 +2,20 @@ import { memo } from "react";
 import Box from "../../components/Box";
 import Text from "../../components/Text";
 import { useWallet } from "./useWallet";
-import { ScrollView } from "react-native";
 import { formatCurrency } from "../../utils/formatCurrency";
 import Flex from "../../components/Flex/Flex";
 import { IconName, icons } from "../../assets/icons";
 import { THEME } from "../../theme";
 import { withOpacity } from "../../utils/opacity";
+import { Scroll } from "../../components/ScrollView/ScrollView";
 
 const Wallet = memo(() => {
   const { t, datas, totalMoney } = useWallet();
 
   return (
     <Box bgColor="background" style={{ flex: 1 }}>
-      <ScrollView
+      <Scroll
+        isScreen
         contentContainerStyle={{
           paddingHorizontal: THEME.spacing.md,
         }}
@@ -77,7 +78,7 @@ const Wallet = memo(() => {
             );
           })}
         </Flex>
-      </ScrollView>
+      </Scroll>
     </Box>
   );
 });

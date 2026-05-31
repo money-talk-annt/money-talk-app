@@ -1,8 +1,6 @@
 import React, { memo } from "react";
 import {
-  Pressable,
   ScrollView,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
 import Box from "../../components/Box";
@@ -16,24 +14,19 @@ import QuickAction from "../../components/QuickAction";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { Transaction } from "../../components/Transaction/Transaction";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Scroll } from "../../components/ScrollView/ScrollView";
 
 function DashboardScreen() {
   const {
     t,
     handlePressQuickAction,
     isExpense,
-    height,
     handleNavigateToHistory,
   } = useDashboard();
-  const insets = useSafeAreaInsets();
   return (
-    <Box bgColor="background" style={{ height: height}}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: THEME.spacing.container,
-          paddingBottom: insets.bottom + 150,
-        }}
+    <Box bgColor="background" style={{ flex: 1}}>
+      <Scroll
+        isScreen
       >
         <Box pt="xl" pb="gutter">
           <Flex direction="column">
@@ -162,7 +155,7 @@ function DashboardScreen() {
             />
           </Flex>
         </Box>
-      </ScrollView>
+      </Scroll>
     </Box>
   );
 }

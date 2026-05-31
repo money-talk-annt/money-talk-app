@@ -41,4 +41,5 @@ export const COLORS = {
   surfaceLow: "#eff4ff",
   surfaceHigh: "#dce9ff",
   transparent: "transparent",
+  category: '#E5EEFF'
 } as const;

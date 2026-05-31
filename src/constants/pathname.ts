@@ -1,10 +1,11 @@
 const PATHNAME = {
   DASHBOARD: "Dashboards",
-  HISTORY: "Transactions",
-  ANALYTISC: "Analytics",
+  HISTORY: "History",
+  ANALYTICS: "Analytics",
   PROFILE: "Profile",
   WALLET: "Wallet",
-  ADDWALLET:"AddWallet"
+  ADDWALLET: "AddWallet",
+  TRANSACTION_ROOT: "TransactionRoot",
 } as const;
 
 export { PATHNAME };
