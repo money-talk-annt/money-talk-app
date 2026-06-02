@@ -6,7 +6,8 @@ export interface TransactionProps extends BoxProps {
   icon?: ComponentProps<typeof Ionicons>["name"];
   name?: string;
   category?: string;
-  time?: Date;
+  time?: Date | string;
   typeTrasaction?: "income" | "expense";
   money?: number;
+  onPress?: () => void;
 }

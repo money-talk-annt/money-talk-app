@@ -3,14 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useWindowDimensions } from "react-native";
 import { useAddWalletForm } from "./useAddWalletForm";
 import { useCallback, useLayoutEffect, useState } from "react";
-import { WalletRepository } from "../../database/repository/wallet";
 import i18n from "../../i18n";
 import { CURRENCY } from "../../constants/currencey";
-import HeaderRight from "../../components/HeaderRight";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { walletRepo } from "../../database/repository/wallet";
 
 export const useAddWallet = () => {
-  const walletRepo = new WalletRepository();
   const { t } = useTranslation("addWallet");
   const navigation = useNavigation<AppNavigation>();
   const { height } = useWindowDimensions();
@@ -22,7 +20,7 @@ export const useAddWallet = () => {
     reset,
   } = useAddWalletForm(t);
   const [ballance, setBallance] = useState<number>(0);
-  const {bottom} = useSafeAreaInsets()
+  const { bottom } = useSafeAreaInsets();
 
   const language = i18n.language;
 

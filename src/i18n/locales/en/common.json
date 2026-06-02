@@ -4,18 +4,18 @@
 
   "categories": {
     "food": "Food",
-    "transport": "Trans",
-    "shopping": "Shopping",
+    "car": "Trans",
+    "bag": "Shopping",
     "home": "Home",
     "health": "Health",
     "coffee": "Coffee",
     "other": "Other",
-    "salary": "Salary",
+    "cash": "Salary",
     "gift": "Bonus",
     "refund": "Refund",
-    "business": "Business",
-    "freelance": "Freelance",
-    "savingsInterest": "Savings Interest",
+    "trending": "Business",
+    "pc": "Freelance",
+    "bank": "Savings Interest",
     "sale": "Sales"
   }
 }

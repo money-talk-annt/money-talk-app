@@ -1,25 +1,27 @@
 import i18n from "i18next";
 import { CURRENCY } from "../constants/currencey";
 
-export const formatTransactionDate = (date: Date) => {
+export const formatTransactionDate = (date: Date | string) => {
   const locale = i18n.language as keyof typeof CURRENCY;
 
-  const localTime = CURRENCY[locale].locale
+  const localTime = CURRENCY[locale].locale;
+
+  const newDate = typeof date === "string" ? new Date(date) : date;
 
   const now = new Date();
 
-  const isToday = date.toDateString() === now.toDateString();
+  const isToday = newDate.toDateString() === now.toDateString();
 
   const yesterday = new Date();
   yesterday.setDate(now.getDate() - 1);
 
-  const isYesterday = date.toDateString() === yesterday.toDateString();
+  const isYesterday = newDate.toDateString() === yesterday.toDateString();
 
   if (isToday) {
     return `Today, ${new Intl.DateTimeFormat(localTime, {
       hour: "numeric",
       minute: "numeric",
-    }).format(date)}`;
+    }).format(newDate)}`;
   }
 
   if (isYesterday) {
@@ -29,5 +31,5 @@ export const formatTransactionDate = (date: Date) => {
   return new Intl.DateTimeFormat(locale, {
     month: "short",
     day: "numeric",
-  }).format(date);
+  }).format(newDate);
 };

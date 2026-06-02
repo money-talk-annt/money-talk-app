@@ -85,8 +85,9 @@ const InputComponent = <T extends FieldValues>({
         style={[
           {
             paddingHorizontal: THEME.spacing.md,
-            paddingVertical: THEME.spacing.container,
+            height: 60,
             backgroundColor: THEME.colors.surfaceLow,
+            textAlignVertical: "center",
             ...typo,
           },
           variant === "secondary" && inputStyles.secondary,
@@ -110,6 +111,7 @@ const inputStyles = StyleSheet.create({
     color: THEME.colors.primary,
     paddingHorizontal: THEME.spacing.sm,
     borderBottomWidth: 2,
+    height: 70,
     borderBlockColor: THEME.colors.primary,
     ...THEME.typography.displayLg,
   },

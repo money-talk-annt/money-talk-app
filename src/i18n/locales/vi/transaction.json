@@ -24,8 +24,18 @@
     "description": "Vui lòng tạo ví của bạn",
     "cancel": "Hủy"
   },
-  "bottomSheet":{
+  "bottomSheet": {
     "title": "Chọn ví",
     "close": "Đóng"
+  },
+  "success": "Giao dịch đã được lưu",
+  "failure": "Thất bại khi lưu giao dịch",
+
+  "detail": {
+    "title": "Chi tiết giao dịch",
+    "date": "Ngày",
+    "wallet": "Ví",
+    "note": "Ghi chú",
+    "delete": "Xóa"
   }
 }

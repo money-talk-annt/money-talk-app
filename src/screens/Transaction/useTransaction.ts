@@ -3,7 +3,6 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -12,10 +11,10 @@ import { TabItem } from "../../components/Tab";
 import { useTransactionForm } from "./useTransactionForm";
 import { CATEGORY_ICONS } from "../../constants/categoryIcon";
 import { IconName, icons } from "../../assets/icons";
-import { GetWallet, WalletRepository } from "../../database/repository/wallet";
-import { Ionicons } from "@expo/vector-icons";
+import { GetWallet, walletRepo } from "../../database/repository/wallet";
 import { THEME } from "../../theme";
-import BottomSheet from "@gorhom/bottom-sheet";
+import { Alert } from "react-native";
+import { transactionRepo } from "../../database/repository/transaction";
 
 export type TypeState = "income" | "expense";
 
@@ -23,13 +22,19 @@ export const useTransaction = () => {
   const navigation = useNavigation<AppNavigation>();
   const { t } = useTranslation("transaction");
   const { t: tCommon } = useTranslation("common");
-  const { control, handleSubmit, setValue, watch, getValues } =
-    useTransactionForm(t);
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    getValues,
+    reset,
+    formState: { isValid },
+  } = useTransactionForm(t);
   const [isShowCalander, setIsShowCalander] = useState(false);
   const [isShowWallet, setIsShowWallet] = useState(false);
+  const [isShowTime, setIsShowTime] = useState(false);
   const [wallets, setWallets] = useState<GetWallet[]>();
-
-  const walletRepo = new WalletRepository();
 
   const type = watch("type");
 
@@ -73,7 +78,7 @@ export const useTransaction = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const data = walletRepo.get();
+      const data = walletRepo.gets();
       setWallets(data);
     }, []),
   );
@@ -86,7 +91,11 @@ export const useTransaction = () => {
     setIsShowCalander(false);
   }, []);
 
-  const handleOpenWallet = useCallback(() => {
+  const handleCloseTime = useCallback(() => {
+    setIsShowTime(false);
+  }, []);
+
+  const handleOpenWallet: VoidFunction = useCallback(() => {
     setIsShowWallet(true);
   }, []);
 
@@ -103,11 +112,10 @@ export const useTransaction = () => {
   }, [walletId]);
 
   useLayoutEffect(() => {
-    const walletId = getValues("walletId");
     if (!walletId && wallets) {
-      setValue("walletId", wallets?.[0].id);
+      setValue("walletId", wallets?.[0]?.id);
     }
-  }, [wallets]);
+  }, [wallets, walletId]);
 
   const handleSelectWallet = useCallback(
     (id: number) => {
@@ -125,14 +133,52 @@ export const useTransaction = () => {
   const handleSelectDate = useCallback(
     (value: Date) => {
       setValue("date", value);
-      handleCloseCalander();
+      setIsShowTime(true);
+      setIsShowCalander(false);
     },
     [setValue],
   );
 
+  const handleSelectTime = useCallback(
+    (value: Date) => {
+      const current = getValues("date");
+      const mergedDate = new Date(current);
+      mergedDate.setHours(value.getHours());
+      mergedDate.setMinutes(value.getMinutes());
+      mergedDate.setSeconds(value.getSeconds());
+      mergedDate.setMilliseconds(value.getMilliseconds());
+
+      setValue("date", mergedDate);
+      setIsShowTime(false);
+    },
+    [getValues, setValue],
+  );
+
   const handleSubmitTransaction = useCallback(
-    handleSubmit(({ amount, category, date, type, walletId, note }) => {}),
-    [],
+    handleSubmit(async ({ amount, category, date, type, walletId, note }) => {
+      try {
+        const numAmount = parseFloat(
+          typeof amount === "string"
+            ? amount.replaceAll(".", "").replace(",", ".")
+            : String(amount),
+        );
+        transactionRepo.createWithWalletUpdate({
+          wallet_id: walletId,
+          type,
+          amount: numAmount,
+          category,
+          note: note || undefined,
+          transaction_date: date ? date.toISOString() : undefined,
+        });
+
+        reset();
+        Alert.alert(t("announment.title"), t("success"));
+      } catch (error) {
+        console.error(error);
+        Alert.alert(t("announment.title"), t("failure"));
+      }
+    }),
+    [handleSubmit, transactionRepo, reset, t],
   );
 
   return {
@@ -149,12 +195,17 @@ export const useTransaction = () => {
     isShowWallet,
     walletAcitve,
     currentDate,
+    isValid,
+    isShowTime,
     handleSelectWallet,
+    handleSelectTime,
     handleOpenWallet,
     handleCloseWallet,
     handleChangeType,
     handleOpenCalander,
     handleCloseCalander,
+    handleCloseTime,
     handleSelectDate,
+    handleSubmitTransaction,
   };
 };

@@ -11,8 +11,8 @@ import Transaction from "../screens/Transaction";
 export const ProfileNested = createNativeStackNavigator({
   initialRouteName: "ProfileStack",
   screenOptions: {
-    headerTintColor: THEME.colors.primary,
-    headerTitleStyle: THEME.typography.headlineMd,
+    // headerTintColor: THEME.colors.primary,
+    // headerTitleStyle: THEME.typography.headlineMd,
     headerBackButtonDisplayMode: "minimal",
   },
   screens: {

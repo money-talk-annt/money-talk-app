@@ -33,13 +33,18 @@ const TransactionScreen = () => {
     currentDate,
     isShowCalander,
     walletAcitve,
+    isShowTime,
+    isValid,
+    handleSelectTime,
     handleChangeType,
     handleOpenCalander,
     handleCloseCalander,
+    handleCloseTime,
     handleCloseWallet,
     handleOpenWallet,
     handleSelectWallet,
     handleSelectDate,
+    handleSubmitTransaction,
   } = useTransaction();
 
   if (wallets?.length === 0) {
@@ -69,13 +74,16 @@ const TransactionScreen = () => {
         <Text align="center" type="bodyLgBold" color="outline">
           {t("amount")}
         </Text>
-        <Input
-          control={control}
-          name="amount"
-          type="money"
-          placeholder="0"
-          variant="secondary"
-        />
+        <Box px="40">
+          <Input
+            control={control}
+            name="amount"
+            keyboardType="decimal-pad"
+            type="money"
+            placeholder="0"
+            variant="secondary"
+          />
+        </Box>
 
         <Box mt="xl" p="container" radius="xl" bgColor="white" shadow="level1">
           <Text type="bodyLgBold" color="outline">
@@ -166,12 +174,24 @@ const TransactionScreen = () => {
               data={wallets}
               onSelect={(id) => handleSelectWallet(id)}
             />
-            <DateTimePickerModal
-              isVisible={isShowCalander}
-              mode="date"
-              onConfirm={handleSelectDate}
-              onCancel={handleCloseCalander}
-            />
+            {isShowCalander && (
+              <DateTimePickerModal
+                isVisible={true}
+                mode="date"
+                date={currentDate}
+                onConfirm={handleSelectDate}
+                onCancel={handleCloseCalander}
+              />
+            )}
+            {isShowTime && (
+              <DateTimePickerModal
+                isVisible={true}
+                mode="time"
+                date={currentDate}
+                onConfirm={handleSelectTime}
+                onCancel={handleCloseTime}
+              />
+            )}
           </Flex>
 
           <Box
@@ -180,6 +200,7 @@ const TransactionScreen = () => {
             p="md"
             shadow="level1"
             radius="lg"
+            mb="40"
           >
             <Input
               control={control}
@@ -189,7 +210,11 @@ const TransactionScreen = () => {
             />
           </Box>
 
-          <Button title={t("save")} />
+          <Button
+            title={t("save")}
+            disabled={!isValid}
+            onPress={handleSubmitTransaction}
+          />
         </Box>
       </Scroll>
     </Box>

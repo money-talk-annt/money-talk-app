@@ -3,18 +3,18 @@
   "add": "Thêm",
   "categories": {
     "food": "Ăn uống",
-    "transport": "Di chuyển",
-    "shopping": "Mua sắm",
+    "car": "Di chuyển",
+    "bag": "Mua sắm",
     "home": "Nhà cửa",
     "health": "Sức khỏe",
     "coffee": "Cà phê",
     "other": "Khác",
-    "salary": "Lương",
+    "cash": "Lương",
     "gift": "Thưởng",
     "refund": "Hoàn tiền",
-    "business": "Kinh doanh",
-    "freelance": "Freelance",
-    "savingsInterest":"Lãi tiết kiệm",
+    "trending": "Kinh doanh",
+    "pc": "Freelance",
+    "bank": "Lãi tiết kiệm",
     "sale": "Bán hàng"
   }
 }

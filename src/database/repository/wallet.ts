@@ -1,3 +1,4 @@
+import { IconName } from "../../assets/icons";
 import { THEME } from "../../theme";
 import { db } from "../config";
 
@@ -6,14 +7,14 @@ export type GetWallet = {
   name: string;
   balance: number;
   color?: string;
-  icon?: string;
+  icon?: IconName;
 };
 
 class WalletRepository {
   add(
     name: string,
     balance = 0,
-    color = (THEME.colors.primary) as string,
+    color = THEME.colors.primary as string,
     icon = "wallet-outline",
   ) {
     db.withTransactionSync(() => {
@@ -26,7 +27,7 @@ class WalletRepository {
     });
   }
 
-  get():GetWallet[] {
+  gets(): GetWallet[] {
     return db.getAllSync(`
         SELECT id, name, balance, icon, color
         FROM wallets
@@ -34,11 +35,18 @@ class WalletRepository {
     `) as GetWallet[];
   }
 
-  delete(){
+  delete() {
+    db.runSync(`DELETE FROM wallets`);
+  }
+
+  updateBalance(id: number, newBalance: number) {
     db.runSync(
-      `DELETE FROM wallets`
-    )
+      `UPDATE wallets
+       SET balance = balance + ?
+       WHERE id = ?`,
+      [newBalance, id],
+    );
   }
 }
 
-export { WalletRepository };
+export const walletRepo = new WalletRepository();

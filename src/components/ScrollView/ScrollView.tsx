@@ -21,6 +21,7 @@ const Scroll = memo(
     return (
       <Component
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={[
           isScreen && {
             paddingHorizontal: THEME.spacing.container,

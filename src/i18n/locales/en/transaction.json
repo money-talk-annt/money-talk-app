@@ -27,5 +27,15 @@
   "bottomSheet": {
     "title": "Select your wallet",
     "close": "Close"
+  },
+  "success": "Transaction saved",
+  "failure": "Failed to save transaction",
+
+  "detail": {
+    "title": "Transaction Details",
+    "date": "Date",
+    "wallet": "Wallet",
+    "note": "Note",
+    "delete": "Delete"
   }
 }

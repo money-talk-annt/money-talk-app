@@ -13,7 +13,7 @@ export const transactionSchema = (
     type: z.enum(["expense", "income"]),
 
     amount: z
-      .string()
+      .string({error: t("errors.required")})
       .min(1, t("errors.required"))
       .regex(MONEY, t("errors.number")),
 

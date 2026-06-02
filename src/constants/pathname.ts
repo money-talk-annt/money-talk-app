@@ -6,6 +6,7 @@ const PATHNAME = {
   WALLET: "Wallet",
   ADDWALLET: "AddWallet",
   TRANSACTION_ROOT: "TransactionRoot",
+  TRANSACTION_DETAIL: "TransactionDetail",
 } as const;
 
 export { PATHNAME };
