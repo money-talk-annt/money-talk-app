@@ -193,7 +193,12 @@ function DashboardScreen() {
 
           {/* Card Middle: Balance Value */}
           <View style={styles.heroBalanceContainer}>
-            <Text style={styles.heroBalanceValue}>
+            <Text
+              type="displayLg"
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={styles.heroBalanceValue}
+            >
               {isBalanceVisible ? formatCurrency(totalBalance) : "•••••••• ₫"}
             </Text>
           </View>
@@ -208,11 +213,15 @@ function DashboardScreen() {
               <View style={[styles.statIconBadge, styles.statIncomeBadge]}>
                 <Ionicons name="arrow-down" size={14} color="#10B981" />
               </View>
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.statLabel}>
                   {t("monthCashflow.income")}
                 </Text>
-                <Text style={styles.statValueIncome}>
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  style={styles.statValueIncome}
+                >
                   {isBalanceVisible
                     ? `+${formatCurrency(monthCashflow.income)}`
                     : "••••••"}
@@ -228,11 +237,15 @@ function DashboardScreen() {
               <View style={[styles.statIconBadge, styles.statExpenseBadge]}>
                 <Ionicons name="arrow-up" size={14} color="#EF4444" />
               </View>
-              <View>
+              <View style={{ flex: 1 }}>
                 <Text style={styles.statLabel}>
                   {t("monthCashflow.expense")}
                 </Text>
-                <Text style={styles.statValueExpense}>
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  style={styles.statValueExpense}
+                >
                   {isBalanceVisible
                     ? `-${formatCurrency(monthCashflow.expense)}`
                     : "••••••"}
@@ -692,6 +705,7 @@ const styles = StyleSheet.create({
   heroLabel: {
     color: "rgba(255, 255, 255, 0.75)",
     fontSize: 12,
+    lineHeight: 16,
     fontWeight: "600",
     letterSpacing: 0.8,
   },
@@ -704,11 +718,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   heroBalanceContainer: {
-    marginVertical: 14,
+    marginVertical: 10,
+    justifyContent: "center",
+    minHeight: 52,
   },
   heroBalanceValue: {
     color: "#FFFFFF",
-    fontSize: 32,
+    fontSize: 34,
+    lineHeight: 46,
     fontWeight: "800",
     letterSpacing: -0.5,
   },
@@ -730,7 +747,7 @@ const styles = StyleSheet.create({
   },
   heroStatSeparator: {
     width: 1,
-    height: 30,
+    height: 32,
     backgroundColor: "rgba(255, 255, 255, 0.12)",
     marginHorizontal: 12,
   },
@@ -750,17 +767,20 @@ const styles = StyleSheet.create({
   statLabel: {
     color: "rgba(255, 255, 255, 0.7)",
     fontSize: 11,
+    lineHeight: 16,
     fontWeight: "500",
     marginBottom: 2,
   },
   statValueIncome: {
     color: "#34D399",
     fontSize: 13,
+    lineHeight: 18,
     fontWeight: "700",
   },
   statValueExpense: {
     color: "#F87171",
     fontSize: 13,
+    lineHeight: 18,
     fontWeight: "700",
   },
 
