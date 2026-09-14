@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GetWallet, WalletRepository } from "../../database/repository/wallet";
+import { GetWallet, walletRepo } from "../../database/repository/wallet";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-
 
 export const useWallet = () => {
   const { t } = useTranslation("wallet");
   const [datas, setDatas] = useState<GetWallet[]>();
-  const walletRepo = new WalletRepository();
   const navigation = useNavigation<AppNavigation>();
-
 
   useEffect(() => {
     navigation.setOptions({
@@ -20,7 +17,7 @@ export const useWallet = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const data = walletRepo.get();
+      const data = walletRepo.gets();
       setDatas(data);
     }, []),
   );

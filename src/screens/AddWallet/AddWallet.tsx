@@ -1,12 +1,10 @@
 import { memo, useLayoutEffect } from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import Box from "../../components/Box";
 import Text from "../../components/Text";
 import Flex from "../../components/Flex/Flex";
 import Input from "../../components/Input";
-import QuickAction from "../../components/QuickAction";
 
 import { useAddWallet } from "./useAddWallet";
 import { THEME } from "../../theme";
@@ -16,11 +14,12 @@ import { COLORS } from "../../constants/colors";
 import { WALLET_ICONS } from "../../constants/walletIcon";
 import Icon from "../../components/Icon";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { Scroll } from "../../components/ScrollView/ScrollView";
+import Button from "../../components/Button";
 
 const AddWallet = memo(() => {
   const {
     t,
-    navigation,
     control,
     currency,
     colorIcon,
@@ -29,21 +28,16 @@ const AddWallet = memo(() => {
     ballance,
     walletName,
     handleSubmitForm,
-    handleOnChangeBallance
+    handleOnChangeBallance,
   } = useAddWallet();
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: t("title"),
-    });
-  }, [navigation, t]);
 
   return (
     <Box style={{ flex: 1 }} bgColor="background">
-      <KeyboardAwareScrollView
+      <Scroll
+        isScreen
+        isKeyboardAwareScrollView
         enableOnAndroid
         keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: THEME.spacing.container,
           paddingTop: THEME.spacing.md,
@@ -128,28 +122,16 @@ const AddWallet = memo(() => {
           <Color control={control} name="color" values={COLORS} />
         </Box>
 
-        <TouchableOpacity
+        <Button
+          title={t("actions.save")}
+          loading={isSubmitting}
+          disabled={!isValid}
           onPress={handleSubmitForm}
-          disabled={!isValid || isSubmitting}
-          activeOpacity={0.8}
           style={{
             marginTop: THEME.spacing.lg,
-            paddingVertical: THEME.spacing.container,
-            borderRadius: THEME.radius.lg,
-            alignItems: "center",
-            backgroundColor: THEME.colors.primary,
-            opacity: !isValid || isSubmitting ? 0.6 : 1,
           }}
-        >
-          {isSubmitting ? (
-            <ActivityIndicator color={THEME.colors.white} />
-          ) : (
-            <Text type="bodyMd" color="white">
-              {t("actions.save")}
-            </Text>
-          )}
-        </TouchableOpacity>
-      </KeyboardAwareScrollView>
+        />
+      </Scroll>
     </Box>
   );
 });

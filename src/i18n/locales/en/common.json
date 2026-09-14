@@ -1,4 +1,21 @@
 {
   "back": "Back",
-  "add": "Add"
+  "add": "Add",
+
+  "categories": {
+    "food": "Food",
+    "car": "Trans",
+    "bag": "Shopping",
+    "home": "Home",
+    "health": "Health",
+    "coffee": "Coffee",
+    "other": "Other",
+    "cash": "Salary",
+    "gift": "Bonus",
+    "refund": "Refund",
+    "trending": "Business",
+    "pc": "Freelance",
+    "bank": "Savings Interest",
+    "sale": "Sales"
+  }
 }

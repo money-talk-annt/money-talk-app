@@ -1,14 +1,41 @@
 {
-  "title": "Transaction",
-  "add_transaction": "Add Transaction",
-  "income": "Income",
+  "title": "Add transaction",
   "expense": "Expense",
-  "date": "Date",
+  "income": "Income",
   "amount": "Amount",
   "category": "Category",
-  "description": "Description",
-  "filter": "Filter",
-  "sort": "Sort",
-  "all_transactions": "All Transactions",
-  "no_data": "No data"
+
+  "time": "Date",
+  "today": "Today",
+
+  "wallet": "Wallet",
+  "defaultWallet": "Cash",
+
+  "note": "Note",
+  "notePlaceholder": "Add details (optional)...",
+  "save": "SAVE",
+  "errors": {
+    "required": "This field is required",
+    "number": "Invalid amount",
+    "maxLength": "Maximum length exceeded"
+  },
+  "announment": {
+    "title": "Notification",
+    "description": "Please create a wallet first",
+    "cancel": "Cancel"
+  },
+  "bottomSheet": {
+    "title": "Select your wallet",
+    "close": "Close"
+  },
+  "success": "Transaction saved",
+  "failure": "Failed to save transaction",
+
+  "detail": {
+    "title": "Transaction Details",
+    "date": "Date",
+    "wallet": "Wallet",
+    "note": "Note",
+    "delete": "Delete"
+  }
 }

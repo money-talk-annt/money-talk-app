@@ -2,6 +2,7 @@ export const SPACING = {
   normal: 0,
   container: 20,
   sm: 8,
+  icon: 10,
   md: 16,
   lg: 24,
   gutter: 16,

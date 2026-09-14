@@ -6,12 +6,13 @@ import { THEME } from "../theme";
 import DashBoard from "../screens/Dashboard";
 import HeaderRight from "../components/HeaderRight";
 import { PATHNAME } from "../constants/pathname";
+import Transaction from "../screens/Transaction";
 
 export const ProfileNested = createNativeStackNavigator({
   initialRouteName: "ProfileStack",
   screenOptions: {
-    headerTintColor: THEME.colors.primary,
-    headerTitleStyle: THEME.typography.headlineMd,
+    // headerTintColor: THEME.colors.primary,
+    // headerTitleStyle: THEME.typography.headlineMd,
     headerBackButtonDisplayMode: "minimal",
   },
   screens: {
@@ -47,3 +48,4 @@ export const DashboardNested = createNativeStackNavigator({
     },
   },
 });
+

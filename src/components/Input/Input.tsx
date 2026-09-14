@@ -6,7 +6,7 @@ import {
 } from "react-hook-form";
 import { InputProps } from "./type";
 import Box from "../Box";
-import { BlurEvent, TextInput } from "react-native";
+import { BlurEvent, StyleSheet, TextInput } from "react-native";
 import Text from "../Text";
 import { memo, useCallback } from "react";
 import { THEME } from "../../theme";
@@ -23,6 +23,8 @@ const InputComponent = <T extends FieldValues>({
   control,
   type = "text",
   onChangeText,
+  variant = "primary",
+  style,
   ...props
 }: InputProps<T>) => {
   const {
@@ -80,12 +82,17 @@ const InputComponent = <T extends FieldValues>({
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
         placeholderTextColor={THEME.colors.textPlaceholder}
-        style={{
-          paddingHorizontal: THEME.spacing.md,
-          paddingVertical: THEME.spacing.container,
-          backgroundColor: THEME.colors.surfaceLow,
-          ...typo,
-        }}
+        style={[
+          {
+            paddingHorizontal: THEME.spacing.md,
+            height: 60,
+            backgroundColor: THEME.colors.surfaceLow,
+            textAlignVertical: "center",
+            ...typo,
+          },
+          variant === "secondary" && inputStyles.secondary,
+          style,
+        ]}
         {...props}
       />
       {error && (
@@ -96,6 +103,19 @@ const InputComponent = <T extends FieldValues>({
     </Box>
   );
 };
+
+const inputStyles = StyleSheet.create({
+  secondary: {
+    textAlign: "center",
+    backgroundColor: THEME.colors.transparent,
+    color: THEME.colors.primary,
+    paddingHorizontal: THEME.spacing.sm,
+    borderBottomWidth: 2,
+    height: 70,
+    borderBlockColor: THEME.colors.primary,
+    ...THEME.typography.displayLg,
+  },
+});
 
 const Input = memo(InputComponent) as typeof InputComponent;
 

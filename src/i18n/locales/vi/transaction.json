@@ -1,14 +1,41 @@
 {
-  "title": "Giao dịch",
-  "add_transaction": "Thêm giao dịch",
+  "title": "Thêm giao dịch",
+  "expense": "Chi phí",
   "income": "Thu nhập",
-  "expense": "Chi tiêu",
-  "date": "Ngày",
   "amount": "Số tiền",
   "category": "Danh mục",
-  "description": "Mô tả",
-  "filter": "Lọc",
-  "sort": "Sắp xếp",
-  "all_transactions": "Tất cả giao dịch",
-  "no_data": "Không có dữ liệu"
+
+  "time": "Thời gian",
+  "today": "Hôm nay",
+
+  "wallet": "Nguồn tiền",
+  "defaultWallet": "Tiền mặt",
+
+  "note": "Ghi chú",
+  "notePlaceholder": "Thêm chi tiết (không bắt buộc)...",
+  "save": "LƯU GIAO DỊCH",
+  "errors": {
+    "required": "Trường này là bắt buộc",
+    "number": "Số tiền không hợp lệ",
+    "maxLength": "Độ dài tối đa đã vượt quá"
+  },
+  "announment": {
+    "title": "Thông báo",
+    "description": "Vui lòng tạo ví của bạn",
+    "cancel": "Hủy"
+  },
+  "bottomSheet": {
+    "title": "Chọn ví",
+    "close": "Đóng"
+  },
+  "success": "Giao dịch đã được lưu",
+  "failure": "Thất bại khi lưu giao dịch",
+
+  "detail": {
+    "title": "Chi tiết giao dịch",
+    "date": "Ngày",
+    "wallet": "Ví",
+    "note": "Ghi chú",
+    "delete": "Xóa"
+  }
 }

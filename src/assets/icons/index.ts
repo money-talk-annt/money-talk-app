@@ -10,6 +10,16 @@ import { default as HomeIcon } from "./home.svg";
 import { default as PigIcon } from "./pig.svg";
 import { default as ShopIcon } from "./shop.svg";
 import { default as WalletIcon } from "./wallet.svg";
+import { default as Health } from "./health.svg";
+import { default as Food } from "./food.svg";
+import { default as Coffee } from "./coffe.svg";
+import { default as Other } from "./other.svg";
+import { default as PC } from "./pc.svg";
+import { default as Gift } from "./gift.svg";
+import { default as Refund } from "./refund.svg";
+import { default as Cash } from "./cash.svg";
+import { default as Sale } from "./sale.svg";
+import { default as Trending } from "./trending.svg";
 
 export const icons = {
   bag: BagIcon,
@@ -24,6 +34,16 @@ export const icons = {
   pig: PigIcon,
   shop: ShopIcon,
   wallet: WalletIcon,
+  health: Health,
+  food: Food,
+  coffee: Coffee,
+  other: Other,
+  pc: PC,
+  gift: Gift,
+  refund: Refund,
+  cash: Cash,
+  sale: Sale,
+  trending: Trending,
 } as const;
 
 export type IconName = keyof typeof icons;

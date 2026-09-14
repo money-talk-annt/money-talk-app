@@ -1,10 +1,5 @@
 import React, { memo } from "react";
-import {
-  Pressable,
-  ScrollView,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 import Box from "../../components/Box";
 import { useDashboard } from "./useDashboard";
 import Flex from "../../components/Flex/Flex";
@@ -15,33 +10,34 @@ import { THEME } from "../../theme";
 import QuickAction from "../../components/QuickAction";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { Transaction } from "../../components/Transaction/Transaction";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Scroll } from "../../components/ScrollView/ScrollView";
+import { IconName, icons } from "../../assets/icons";
+import { withOpacity } from "../../utils/opacity";
+import { I18N_CATEGORY_KEY } from "../../constants/categoryIcon";
+import { mapI18n } from "../../utils/mapI18n";
 
 function DashboardScreen() {
   const {
     t,
-    handlePressQuickAction,
+    tCommon,
     isExpense,
-    height,
+    transactions,
+    wallets,
+    totalBalance,
+    handlePressQuickAction,
     handleNavigateToHistory,
+    handleClickTransaction,
   } = useDashboard();
-  const insets = useSafeAreaInsets();
   return (
-    <Box bgColor="background" style={{ height: height}}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: THEME.spacing.container,
-          paddingBottom: insets.bottom + 150,
-        }}
-      >
+    <Box bgColor="background" style={{ flex: 1 }}>
+      <Scroll isScreen>
         <Box pt="xl" pb="gutter">
           <Flex direction="column">
             <Text align="center" type="labelMd">
               {t("totalBalance")}
             </Text>
             <Text align="center" type="displayLg">
-              {formatCurrency(12450)}
+              {formatCurrency(totalBalance)}
             </Text>
           </Flex>
         </Box>
@@ -56,49 +52,28 @@ function DashboardScreen() {
             gap: 12,
           }}
         >
-          <Card
-            bgColor="primaryContainer"
-            title={t("bank")}
-            icon={
-              <Ionicons
-                name="business-outline"
-                size={24}
-                color={THEME.colors.card}
+          {wallets.map((item) => {
+            const ComponentIcon = icons[(item.icon || "cash") as IconName];
+            return (
+              <Card
+                key={item.id}
+                color="text"
+                title={item.name}
+                icon={
+                  <ComponentIcon height={24} width={24} stroke={item.color} />
+                }
+                description={t("totalCash")}
+                money={item.balance}
+                isFull={wallets.length === 1}
+                style={{
+                  backgroundColor: withOpacity(
+                    0.2,
+                    item.color || THEME.colors.primary,
+                  ),
+                }}
               />
-            }
-            description={t("availableFunds")}
-            money={500000}
-          />
-
-          <Card
-            bgColor="surfaceHigh"
-            color="text"
-            title={t("cash")}
-            icon={
-              <Ionicons
-                name="cash-outline"
-                size={24}
-                color={THEME.colors.secondary}
-              />
-            }
-            description={t("totalCash")}
-            money={500000}
-          />
-
-          <Card
-            bgColor="surfaceLow"
-            color="text"
-            title={t("eWallet")}
-            icon={
-              <Ionicons
-                name="wallet-outline"
-                size={24}
-                color={THEME.colors.expense}
-              />
-            }
-            description={t("balance")}
-            money={500000}
-          />
+            );
+          })}
         </ScrollView>
 
         <Box pb="lg" pt="40">
@@ -135,34 +110,23 @@ function DashboardScreen() {
 
         <Box pt="md" pb="container">
           <Flex direction="column" gap={8}>
-            <Transaction
-              icon="fast-food-outline"
-              name="Bánh cuốn Bánh cuốn Bánh cuốn Bánh cuốn"
-              category="Ăn uống"
-              typeTrasaction="income"
-              money={300000000}
-            />
-
-            <Transaction
-              icon="fast-food-outline"
-              name="Bánh cuốn"
-              category="Ăn uống"
-              typeTrasaction="expense"
-              money={30000}
-              time={new Date(Date.now() - 86400000)}
-            />
-
-            <Transaction
-              icon="fast-food-outline"
-              name="Bánh cuốn"
-              category="Ăn uống"
-              typeTrasaction="expense"
-              money={30000}
-              time={new Date("2025-10-24")}
-            />
+            {transactions.map((item) => {
+              return (
+                <Transaction
+                  onPress={() => handleClickTransaction(item.id)}
+                  key={item.id}
+                  icon="fast-food-outline"
+                  name={tCommon(mapI18n(item.category))}
+                  category={item.walletName}
+                  typeTrasaction={item.type}
+                  money={item.amount}
+                  time={item.transactionDate}
+                />
+              );
+            })}
           </Flex>
         </Box>
-      </ScrollView>
+      </Scroll>
     </Box>
   );
 }

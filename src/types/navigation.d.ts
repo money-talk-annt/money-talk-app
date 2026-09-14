@@ -1,9 +1,20 @@
+import {
+  CompositeNavigationProp,
+  NavigatorScreenParams,
+} from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-type RouteName = typeof PATHNAME[keyof typeof PATHNAME];
-
-type RootStackParamList = Record<RouteName, undefined>;
+import { RootTabParamList } from "../navigation/type";
 
 declare global {
-  type AppNavigation = NativeStackNavigationProp<RootStackParamList>;
+  type RootStackParamList = {
+    Home: NavigatorScreenParams<RootTabParamList>;
+    TransactionRoot: undefined;
+    TransactionDetail: { id: number };
+  };
+
+  type AppNavigation = CompositeNavigationProp<
+    BottomTabNavigationProp<RootTabParamList>,
+    NativeStackNavigationProp<RootStackParamList>
+  >;
 }

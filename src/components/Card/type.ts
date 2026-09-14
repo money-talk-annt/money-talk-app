@@ -11,4 +11,6 @@ export interface CardProps extends ViewProps{
     icon: ReactNode;
     bgColor?: keyof typeof COLORS;
     color?: keyof typeof COLORS;
+    isFull?: boolean;
+    onPress?: () => void;
 }
