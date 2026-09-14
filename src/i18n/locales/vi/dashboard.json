@@ -1,5 +1,22 @@
 {
+  "greeting": "Xin chào! 👋",
+  "welcomeBack": "Chào mừng bạn trở lại",
   "totalBalance": "Tổng số dư",
+  "hideBalance": "Ẩn số dư",
+  "showBalance": "Hiện số dư",
+  "monthCashflow": {
+    "income": "Thu tháng này",
+    "expense": "Chi tháng này"
+  },
+  "quickActions": {
+    "income": "Thu nhập",
+    "expense": "Chi tiêu",
+    "wallets": "Ví tiền",
+    "history": "Lịch sử"
+  },
+  "myWallets": "Ví của tôi",
+  "addWallet": "+ Thêm ví",
+  "addNewWallet": "Thêm ví mới",
   "bank": "Ngân hàng",
   "cash": "Tiền mặt",
   "availableFunds": "Số tiền khả dụng",
@@ -7,7 +24,15 @@
   "addExpense": "Thêm chi tiêu",
   "addIncome": "Thêm thu nhập",
   "recentActivity": "Hoạt động gần đây",
+  "all": "Tất cả",
+  "expense": "Chi tiêu",
+  "income": "Thu nhập",
   "seeAll": "Xem tất cả",
   "balance": "Số dư",
-  "eWallet": "Ví điện tử"
+  "eWallet": "Ví điện tử",
+  "empty": {
+    "title": "Chưa có giao dịch gần đây",
+    "subtitle": "Ghi chép chi tiêu để bắt đầu quản lý tài chính hiệu quả",
+    "cta": "+ Giao dịch đầu tiên"
+  }
 }

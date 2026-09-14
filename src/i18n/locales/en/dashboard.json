@@ -1,5 +1,22 @@
 {
+  "greeting": "Hello! 👋",
+  "welcomeBack": "Welcome back",
   "totalBalance": "Total Balance",
+  "hideBalance": "Hide balance",
+  "showBalance": "Show balance",
+  "monthCashflow": {
+    "income": "This month in",
+    "expense": "This month out"
+  },
+  "quickActions": {
+    "income": "Income",
+    "expense": "Expense",
+    "wallets": "Wallets",
+    "history": "History"
+  },
+  "myWallets": "My Wallets",
+  "addWallet": "+ Add Wallet",
+  "addNewWallet": "Add New Wallet",
   "bank": "Bank",
   "cash": "Cash",
   "availableFunds": "Available Funds",
@@ -7,7 +24,15 @@
   "addExpense": "Add Expense",
   "addIncome": "Add Income",
   "recentActivity": "Recent Activity",
+  "all": "All",
+  "expense": "Expense",
+  "income": "Income",
   "seeAll": "See All",
   "balance": "Balance",
-  "eWallet": "E-Wallet"
+  "eWallet": "E-Wallet",
+  "empty": {
+    "title": "No recent transactions",
+    "subtitle": "Record your income and expenses to start managing your budget",
+    "cta": "+ First Transaction"
+  }
 }

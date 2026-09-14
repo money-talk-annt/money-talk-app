@@ -36,15 +36,11 @@ export const ProfileNested = createNativeStackNavigator({
 
 export const DashboardNested = createNativeStackNavigator({
   screenOptions: {
-    headerTintColor: THEME.colors.primary,
-    headerTitleStyle: THEME.typography.headlineMd,
+    headerShown: false,
   },
   screens: {
     DashboardStack: {
       screen: DashBoard,
-      options: {
-        headerTitle: "Money Talk",
-      },
     },
   },
 });
