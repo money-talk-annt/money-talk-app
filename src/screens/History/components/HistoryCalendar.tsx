@@ -7,7 +7,6 @@ import dayjs from "../../../utils/dayjs";
 import { THEME } from "../../../theme";
 import Text from "../../../components/Text";
 import Flex from "../../../components/Flex/Flex";
-import { formatCurrency } from "../../../utils/formatCurrency";
 import { DailySummary } from "../type";
 
 interface HistoryCalendarProps {
@@ -57,9 +56,16 @@ const HistoryCalendarComponent = ({
 }: HistoryCalendarProps) => {
   const [isPickerVisible, setIsPickerVisible] = useState(false);
 
+  const today = useMemo(() => dayjs(), []);
+
   const isCurrentMonthNow = useMemo(() => {
-    return currentMonth.isSame(dayjs(), "month");
-  }, [currentMonth]);
+    return currentMonth.isSame(today, "month");
+  }, [currentMonth, today]);
+
+  // Disable navigating to future months
+  const canGoNext = useMemo(() => {
+    return currentMonth.isBefore(today.startOf("month"), "month");
+  }, [currentMonth, today]);
 
   const weekdays = useMemo(() => {
     return ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
@@ -76,6 +82,7 @@ const HistoryCalendarComponent = ({
       dayNumber: number | null;
       dateKey: string;
       isToday: boolean;
+      isFuture: boolean;
       income: number;
       expense: number;
     }[] = [];
@@ -86,22 +93,29 @@ const HistoryCalendarComponent = ({
         dayNumber: null,
         dateKey: `blank-${i}`,
         isToday: false,
+        isFuture: false,
         income: 0,
         expense: 0,
       });
     }
 
     // Days of the month
-    const todayStr = dayjs().format("YYYY-MM-DD");
+    const todayDate = dayjs();
+    const todayStr = todayDate.format("YYYY-MM-DD");
+
     for (let d = 1; d <= daysInMonth; d++) {
-      const dateKey = currentMonth.date(d).format("YYYY-MM-DD");
+      const dateObj = currentMonth.date(d);
+      const dateKey = dateObj.format("YYYY-MM-DD");
+      const isFuture = dateObj.isAfter(todayDate, "day");
       const summary = dailySummaries[dateKey] || { totalIncome: 0, totalExpense: 0 };
+
       days.push({
         dayNumber: d,
         dateKey,
         isToday: dateKey === todayStr,
-        income: summary.totalIncome,
-        expense: summary.totalExpense,
+        isFuture,
+        income: isFuture ? 0 : summary.totalIncome,
+        expense: isFuture ? 0 : summary.totalExpense,
       });
     }
 
@@ -149,14 +163,15 @@ const HistoryCalendarComponent = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.navButton}
-            onPress={onNextMonth}
-            activeOpacity={0.7}
+            style={[styles.navButton, !canGoNext && styles.navButtonDisabled]}
+            onPress={canGoNext ? onNextMonth : undefined}
+            disabled={!canGoNext}
+            activeOpacity={canGoNext ? 0.7 : 1}
           >
             <Ionicons
               name="chevron-forward"
               size={18}
-              color={THEME.colors.text}
+              color={canGoNext ? THEME.colors.text : THEME.colors.outline}
             />
           </TouchableOpacity>
         </View>
@@ -188,16 +203,16 @@ const HistoryCalendarComponent = ({
         </Flex>
       </View>
 
-      {/* Month Sub-Summary Strip */}
+      {/* Month Sub-Summary Strip: strictly fixed height 36px so it never jumps */}
       <View style={styles.monthStatsBanner}>
-        <Flex align="center" justify="space-between" style={{ width: "100%" }}>
+        <Flex align="center" gap={12} style={{ flex: 1 }}>
           <Flex align="center" gap={4}>
             <View style={[styles.dot, { backgroundColor: THEME.colors.secondary }]} />
             <Text type="labelSm" color="textSecondary">
               Thu:
             </Text>
-            <Text type="labelSm" color="secondary">
-              +{formatCurrency(monthIncome)}
+            <Text type="labelSm" color="secondary" style={{ fontWeight: "600" }}>
+              +{formatCompactAmount(monthIncome)}
             </Text>
           </Flex>
 
@@ -206,29 +221,29 @@ const HistoryCalendarComponent = ({
             <Text type="labelSm" color="textSecondary">
               Chi:
             </Text>
-            <Text type="labelSm" color="expense">
-              -{formatCurrency(monthExpense)}
+            <Text type="labelSm" color="expense" style={{ fontWeight: "600" }}>
+              -{formatCompactAmount(monthExpense)}
             </Text>
           </Flex>
-
-          {Boolean(selectedDate) && (
-            <TouchableOpacity
-              onPress={() => onSelectDate(null)}
-              style={styles.clearFilterPill}
-              activeOpacity={0.7}
-            >
-              <Text type="labelSm" color="primary">
-                {t("calendar.allMonth")}
-              </Text>
-              <Ionicons
-                name="close-circle"
-                size={14}
-                color={THEME.colors.primary}
-                style={{ marginLeft: 3 }}
-              />
-            </TouchableOpacity>
-          )}
         </Flex>
+
+        {Boolean(selectedDate) && (
+          <TouchableOpacity
+            onPress={() => onSelectDate(null)}
+            style={styles.clearFilterPill}
+            activeOpacity={0.7}
+          >
+            <Text type="labelSm" color="primary" style={{ fontWeight: "600" }}>
+              {t("calendar.allMonth")}
+            </Text>
+            <Ionicons
+              name="close-circle"
+              size={14}
+              color={THEME.colors.primary}
+              style={{ marginLeft: 3 }}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Expanded Grid */}
@@ -251,24 +266,25 @@ const HistoryCalendarComponent = ({
 
           {/* Days Grid */}
           <View style={styles.daysGrid}>
-            {calendarDays.map((item, index) => {
+            {calendarDays.map((item) => {
               if (item.dayNumber === null) {
                 return <View key={item.dateKey} style={styles.dayCell} />;
               }
 
               const isSelected = selectedDate === item.dateKey;
-              const hasActivity = item.income > 0 || item.expense > 0;
 
               return (
                 <TouchableOpacity
                   key={item.dateKey}
+                  disabled={item.isFuture}
                   style={[
                     styles.dayCell,
                     isSelected && styles.dayCellSelected,
                     item.isToday && !isSelected && styles.dayCellToday,
+                    item.isFuture && styles.dayCellFuture,
                   ]}
                   onPress={() => {
-                    // Toggle selection
+                    if (item.isFuture) return;
                     onSelectDate(isSelected ? null : item.dateKey);
                   }}
                   activeOpacity={0.7}
@@ -284,7 +300,9 @@ const HistoryCalendarComponent = ({
                     <Text
                       type="labelSm"
                       color={
-                        isSelected
+                        item.isFuture
+                          ? "textPlaceholder"
+                          : isSelected
                           ? "white"
                           : item.isToday
                           ? "primary"
@@ -294,6 +312,7 @@ const HistoryCalendarComponent = ({
                         fontWeight:
                           isSelected || item.isToday ? "700" : "600",
                         fontSize: 13,
+                        opacity: item.isFuture ? 0.4 : 1,
                       }}
                     >
                       {item.dayNumber}
@@ -301,7 +320,7 @@ const HistoryCalendarComponent = ({
                   </View>
 
                   {/* Income Amount */}
-                  {item.income > 0 ? (
+                  {!item.isFuture && item.income > 0 ? (
                     <Text
                       numberOfLines={1}
                       type="labelSm"
@@ -315,7 +334,7 @@ const HistoryCalendarComponent = ({
                   )}
 
                   {/* Expense Amount */}
-                  {item.expense > 0 ? (
+                  {!item.isFuture && item.expense > 0 ? (
                     <Text
                       numberOfLines={1}
                       type="labelSm"
@@ -334,10 +353,11 @@ const HistoryCalendarComponent = ({
         </View>
       )}
 
-      {/* Date Picker Modal for jumping to any month */}
+      {/* Date Picker Modal for jumping to any past/present month */}
       <DateTimePickerModal
         isVisible={isPickerVisible}
         mode="date"
+        maximumDate={new Date()}
         date={currentMonth.toDate()}
         onConfirm={handleConfirmPicker}
         onCancel={() => setIsPickerVisible(false)}
@@ -380,6 +400,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  navButtonDisabled: {
+    opacity: 0.35,
+  },
   monthSelector: {
     flexDirection: "row",
     alignItems: "center",
@@ -408,10 +431,11 @@ const styles = StyleSheet.create({
   monthStatsBanner: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: THEME.colors.surfaceLow,
     borderRadius: THEME.radius.md,
     paddingHorizontal: 12,
-    paddingVertical: 6,
+    height: 36,
     marginTop: 4,
   },
   dot: {
@@ -424,7 +448,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: THEME.colors.card,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    height: 24,
     borderRadius: THEME.radius.full,
     borderWidth: 1,
     borderColor: THEME.colors.primary,
@@ -463,6 +487,9 @@ const styles = StyleSheet.create({
   dayCellSelected: {
     backgroundColor: THEME.colors.surfaceHigh,
     borderColor: THEME.colors.primary,
+  },
+  dayCellFuture: {
+    opacity: 0.35,
   },
   dayNumberCircle: {
     width: 24,

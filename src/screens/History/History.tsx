@@ -403,36 +403,6 @@ const HistoryScreen = () => {
             );
           })}
         </View>
-
-        {/* Active Date Filter Chip (if a specific day is selected) */}
-        {Boolean(selectedDate) && (
-          <View style={styles.activeFilterChipContainer}>
-            <View style={styles.activeFilterChip}>
-              <Ionicons
-                name="funnel"
-                size={14}
-                color={THEME.colors.primary}
-                style={{ marginRight: 6 }}
-              />
-              <Text type="labelSm" color="primary">
-                {t("calendar.selected", {
-                  date: dayjs(selectedDate).format("DD/MM/YYYY"),
-                })}
-              </Text>
-              <TouchableOpacity
-                onPress={() => handleSelectDate(null)}
-                style={{ marginLeft: 8 }}
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name="close-circle"
-                  size={16}
-                  color={THEME.colors.primary}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
       </View>
     );
   };
@@ -520,21 +490,6 @@ const styles = StyleSheet.create({
   filterTabActive: {
     backgroundColor: THEME.colors.primary,
     borderColor: THEME.colors.primary,
-  },
-  activeFilterChipContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 8,
-  },
-  activeFilterChip: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: THEME.colors.surfaceLow,
-    borderWidth: 1,
-    borderColor: THEME.colors.primary,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: THEME.radius.full,
   },
   listContent: {
     paddingBottom: 24,
