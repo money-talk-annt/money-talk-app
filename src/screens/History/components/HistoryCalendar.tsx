@@ -292,8 +292,8 @@ const HistoryCalendarComponent = ({
                       }
                       style={{
                         fontWeight:
-                          isSelected || item.isToday ? "700" : "500",
-                        fontSize: 11,
+                          isSelected || item.isToday ? "700" : "600",
+                        fontSize: 13,
                       }}
                     >
                       {item.dayNumber}
@@ -450,41 +450,45 @@ const styles = StyleSheet.create({
   },
   dayCell: {
     width: "14.285%",
-    minHeight: 48,
+    minHeight: 52,
     alignItems: "center",
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: THEME.radius.sm,
+    borderWidth: 1.5,
+    borderColor: "transparent",
   },
   dayCellToday: {
     backgroundColor: "rgba(67, 67, 213, 0.04)",
   },
   dayCellSelected: {
     backgroundColor: THEME.colors.surfaceHigh,
-    borderWidth: 1,
     borderColor: THEME.colors.primary,
   },
   dayNumberCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 1,
+    marginBottom: 2,
+    borderWidth: 1.5,
+    borderColor: "transparent",
   },
   dayNumberCircleToday: {
-    borderWidth: 1,
     borderColor: THEME.colors.primary,
   },
   dayNumberCircleSelected: {
     backgroundColor: THEME.colors.primary,
+    borderColor: THEME.colors.primary,
   },
   amountText: {
-    fontSize: 9,
-    lineHeight: 11,
+    fontSize: 10,
+    lineHeight: 12,
+    fontWeight: "600",
     textAlign: "center",
   },
   amountPlaceholder: {
-    height: 11,
+    height: 12,
   },
 });
 
