@@ -17,7 +17,7 @@ const HeaderRightComponent = ({
   return (
     <Pressable
       onPress={() => {
-        push(pathname);
+        push(pathname as any);
       }}
       style={{
         backgroundColor: THEME.colors.transparent,

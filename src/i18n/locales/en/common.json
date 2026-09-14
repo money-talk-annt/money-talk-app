@@ -1,7 +1,12 @@
 {
   "back": "Back",
   "add": "Add",
-
+  "language": "Language",
+  "vietnamese": "Vietnamese",
+  "english": "English",
+  "filter": "Filter",
+  "all_transactions": "All transactions",
+  "no_data": "No data",
   "categories": {
     "food": "Food",
     "car": "Trans",

@@ -1,6 +1,12 @@
 {
   "back": "Quay lại",
   "add": "Thêm",
+  "language": "Ngôn ngữ",
+  "vietnamese": "Tiếng Việt",
+  "english": "Tiếng Anh",
+  "filter": "Bộ lọc",
+  "all_transactions": "Tất cả giao dịch",
+  "no_data": "Không có dữ liệu",
   "categories": {
     "food": "Ăn uống",
     "car": "Di chuyển",
