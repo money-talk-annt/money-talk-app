@@ -205,44 +205,59 @@ const HistoryCalendarComponent = ({
 
       {/* Month Sub-Summary Strip: strictly fixed height 36px so it never jumps */}
       <View style={styles.monthStatsBanner}>
-        <Flex align="center" gap={12} style={{ flex: 1 }}>
-          <Flex align="center" gap={4}>
-            <View style={[styles.dot, { backgroundColor: THEME.colors.secondary }]} />
-            <Text type="labelSm" color="textSecondary">
-              Thu:
-            </Text>
-            <Text type="labelSm" color="secondary" style={{ fontWeight: "600" }}>
-              +{formatCompactAmount(monthIncome)}
-            </Text>
-          </Flex>
-
-          <Flex align="center" gap={4}>
-            <View style={[styles.dot, { backgroundColor: THEME.colors.expense }]} />
-            <Text type="labelSm" color="textSecondary">
-              Chi:
-            </Text>
-            <Text type="labelSm" color="expense" style={{ fontWeight: "600" }}>
-              -{formatCompactAmount(monthExpense)}
-            </Text>
-          </Flex>
+        {/* Left: Thu */}
+        <Flex
+          align="center"
+          gap={4}
+          style={selectedDate ? { flex: 1, justifyContent: "flex-start" } : undefined}
+        >
+          <View style={[styles.dot, { backgroundColor: THEME.colors.secondary }]} />
+          <Text type="labelSm" color="textSecondary">
+            Thu:
+          </Text>
+          <Text type="labelSm" color="secondary" style={{ fontWeight: "600" }}>
+            +{formatCompactAmount(monthIncome)}
+          </Text>
         </Flex>
 
+        {/* Center when selected, or Right when not selected: Chi */}
+        <Flex
+          align="center"
+          gap={4}
+          style={
+            selectedDate
+              ? { flex: 1, justifyContent: "center" }
+              : { justifyContent: "flex-end" }
+          }
+        >
+          <View style={[styles.dot, { backgroundColor: THEME.colors.expense }]} />
+          <Text type="labelSm" color="textSecondary">
+            Chi:
+          </Text>
+          <Text type="labelSm" color="expense" style={{ fontWeight: "600" }}>
+            -{formatCompactAmount(monthExpense)}
+          </Text>
+        </Flex>
+
+        {/* Right when selected: Xem cả tháng */}
         {Boolean(selectedDate) && (
-          <TouchableOpacity
-            onPress={() => onSelectDate(null)}
-            style={styles.clearFilterPill}
-            activeOpacity={0.7}
-          >
-            <Text type="labelSm" color="primary" style={{ fontWeight: "600" }}>
-              {t("calendar.allMonth")}
-            </Text>
-            <Ionicons
-              name="close-circle"
-              size={14}
-              color={THEME.colors.primary}
-              style={{ marginLeft: 3 }}
-            />
-          </TouchableOpacity>
+          <Flex align="center" justify="flex-end" style={{ flex: 1 }}>
+            <TouchableOpacity
+              onPress={() => onSelectDate(null)}
+              style={styles.clearFilterPill}
+              activeOpacity={0.7}
+            >
+              <Text type="labelSm" color="primary" style={{ fontWeight: "600" }}>
+                {t("calendar.allMonth")}
+              </Text>
+              <Ionicons
+                name="close-circle"
+                size={14}
+                color={THEME.colors.primary}
+                style={{ marginLeft: 3 }}
+              />
+            </TouchableOpacity>
+          </Flex>
         )}
       </View>
 
