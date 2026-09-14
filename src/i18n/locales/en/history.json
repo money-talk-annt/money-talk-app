@@ -8,6 +8,15 @@
     "totalExpense": "Expense",
     "net": "Net"
   },
+  "calendar": {
+    "title": "Financial Calendar",
+    "today": "Today",
+    "allMonth": "View whole month",
+    "selected": "Filtering: {{date}}",
+    "collapse": "Collapse",
+    "expand": "Expand",
+    "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  },
   "periods": {
     "today": "Today",
     "yesterday": "Yesterday",

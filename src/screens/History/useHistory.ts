@@ -1,12 +1,13 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { Dayjs } from "dayjs";
 import dayjs from "../../utils/dayjs";
 import {
   GetTransaction,
   transactionRepo,
 } from "../../database/repository/transaction";
-import { FilterType, HistorySummary, TransactionGroup } from "./type";
+import { DailySummary, FilterType, HistorySummary, TransactionGroup } from "./type";
 import { PATHNAME } from "../../constants/pathname";
 
 const PAGE_SIZE = 20;
@@ -17,22 +18,40 @@ export const useHistory = () => {
   const navigation = useNavigation<AppNavigation>();
 
   const [filter, setFilter] = useState<FilterType>("all");
+  const [currentMonth, setCurrentMonth] = useState<Dayjs>(dayjs().startOf("month"));
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isCalendarExpanded, setIsCalendarExpanded] = useState<boolean>(true);
+
   const [transactions, setTransactions] = useState<GetTransaction[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [summary, setSummary] = useState<HistorySummary>({
+
+  const [dailySummaries, setDailySummaries] = useState<DailySummary>({});
+  const [monthSummary, setMonthSummary] = useState<{ totalIncome: number; totalExpense: number }>({
+    totalIncome: 0,
+    totalExpense: 0,
+  });
+
+  const [overallSummary, setOverallSummary] = useState<HistorySummary>({
     totalIncome: 0,
     totalExpense: 0,
     net: 0,
   });
 
+  // Calculate active date prefix for filtering
+  const activeDatePrefix = useMemo(() => {
+    if (selectedDate) return selectedDate;
+    return currentMonth.format("YYYY-MM");
+  }, [selectedDate, currentMonth]);
+
   const loadData = useCallback(
-    (targetPage: number, targetFilter: FilterType, isRefresh = false) => {
+    (targetPage: number, targetFilter: FilterType, datePrefix: string, isRefresh = false) => {
       try {
         const res = transactionRepo.gets({
           type: targetFilter === "all" ? "all" : targetFilter,
+          datePrefix,
           page: targetPage,
           pageSize: PAGE_SIZE,
           sortBy: "transaction_date",
@@ -43,7 +62,6 @@ export const useHistory = () => {
           setTransactions(res);
         } else {
           setTransactions((prev) => {
-            // Avoid duplicate IDs if any
             const existingIds = new Set(prev.map((item) => item.id));
             const newItems = res.filter((item) => !existingIds.has(item.id));
             return [...prev, ...newItems];
@@ -52,11 +70,12 @@ export const useHistory = () => {
 
         setHasMore(res.length === PAGE_SIZE);
 
-        const summaryData = transactionRepo.getSummary();
-        setSummary({
-          totalIncome: summaryData.totalIncome,
-          totalExpense: summaryData.totalExpense,
-          net: summaryData.totalIncome - summaryData.totalExpense,
+        // Overall summary across the entire database
+        const overall = transactionRepo.getSummary();
+        setOverallSummary({
+          totalIncome: overall.totalIncome,
+          totalExpense: overall.totalExpense,
+          net: overall.totalIncome - overall.totalExpense,
         });
       } catch (error) {
         console.error("Failed to load history data:", error);
@@ -65,20 +84,43 @@ export const useHistory = () => {
     [],
   );
 
-  // Auto refresh on screen focus
+  // Load calendar monthly breakdown whenever currentMonth changes
+  const loadMonthCalendarData = useCallback((month: Dayjs) => {
+    try {
+      const monthStr = month.format("YYYY-MM");
+      const dailies = transactionRepo.getDailySummaryByMonth(monthStr);
+      setDailySummaries(dailies);
+
+      const mSummary = transactionRepo.getSummary({ datePrefix: monthStr });
+      setMonthSummary(mSummary);
+    } catch (error) {
+      console.error("Failed to load calendar month data:", error);
+    }
+  }, []);
+
+  // Reload when screen focused
   useFocusEffect(
     useCallback(() => {
       setPage(1);
-      loadData(1, filter, true);
-    }, [filter, loadData]),
+      loadMonthCalendarData(currentMonth);
+      loadData(1, filter, activeDatePrefix, true);
+    }, [filter, activeDatePrefix, currentMonth, loadData, loadMonthCalendarData]),
   );
+
+  // When month or selectedDate or filter changes
+  useEffect(() => {
+    loadMonthCalendarData(currentMonth);
+    setPage(1);
+    loadData(1, filter, activeDatePrefix, true);
+  }, [currentMonth, selectedDate, filter, activeDatePrefix, loadData, loadMonthCalendarData]);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
     setPage(1);
-    loadData(1, filter, true);
+    loadMonthCalendarData(currentMonth);
+    loadData(1, filter, activeDatePrefix, true);
     setIsRefreshing(false);
-  }, [filter, loadData]);
+  }, [currentMonth, filter, activeDatePrefix, loadData, loadMonthCalendarData]);
 
   const handleEndReached = useCallback(() => {
     if (!hasMore || isLoadingMore || isRefreshing) return;
@@ -86,20 +128,42 @@ export const useHistory = () => {
     setIsLoadingMore(true);
     const nextPage = page + 1;
     setPage(nextPage);
-    loadData(nextPage, filter, false);
+    loadData(nextPage, filter, activeDatePrefix, false);
     setIsLoadingMore(false);
-  }, [hasMore, isLoadingMore, isRefreshing, page, filter, loadData]);
+  }, [hasMore, isLoadingMore, isRefreshing, page, filter, activeDatePrefix, loadData]);
 
-  const handleSelectFilter = useCallback(
-    (newFilter: FilterType) => {
-      if (newFilter === filter) return;
-      setFilter(newFilter);
-      setPage(1);
-      setTransactions([]);
-      loadData(1, newFilter, true);
-    },
-    [filter, loadData],
-  );
+  const handleSelectFilter = useCallback((newFilter: FilterType) => {
+    setFilter(newFilter);
+  }, []);
+
+  const handlePrevMonth = useCallback(() => {
+    setSelectedDate(null);
+    setCurrentMonth((prev) => prev.subtract(1, "month"));
+  }, []);
+
+  const handleNextMonth = useCallback(() => {
+    setSelectedDate(null);
+    setCurrentMonth((prev) => prev.add(1, "month"));
+  }, []);
+
+  const handleSelectMonthDate = useCallback((date: Date) => {
+    setSelectedDate(null);
+    setCurrentMonth(dayjs(date).startOf("month"));
+  }, []);
+
+  const handleToday = useCallback(() => {
+    const today = dayjs();
+    setCurrentMonth(today.startOf("month"));
+    setSelectedDate(today.format("YYYY-MM-DD"));
+  }, []);
+
+  const handleSelectDate = useCallback((dateKey: string | null) => {
+    setSelectedDate(dateKey);
+  }, []);
+
+  const handleToggleCalendarExpand = useCallback(() => {
+    setIsCalendarExpanded((prev) => !prev);
+  }, []);
 
   const handleTransactionPress = useCallback(
     (id: number) => {
@@ -159,15 +223,26 @@ export const useHistory = () => {
     t,
     tCommon,
     filter,
+    currentMonth,
+    selectedDate,
+    dailySummaries,
+    monthSummary,
+    isCalendarExpanded,
     transactions,
     groupedTransactions,
     hasMore,
     isRefreshing,
     isLoadingMore,
-    summary,
+    summary: overallSummary,
     handleRefresh,
     handleEndReached,
     handleSelectFilter,
+    handlePrevMonth,
+    handleNextMonth,
+    handleSelectMonthDate,
+    handleToday,
+    handleSelectDate,
+    handleToggleCalendarExpand,
     handleTransactionPress,
     handleAddTransaction,
   };

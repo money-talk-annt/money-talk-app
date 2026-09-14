@@ -8,6 +8,15 @@
     "totalExpense": "Tổng chi",
     "net": "Chênh lệch"
   },
+  "calendar": {
+    "title": "Lịch thu chi",
+    "today": "Hôm nay",
+    "allMonth": "Xem cả tháng",
+    "selected": "Đang lọc: {{date}}",
+    "collapse": "Thu gọn",
+    "expand": "Mở rộng",
+    "weekdays": ["T2", "T3", "T4", "T5", "T6", "T7", "CN"]
+  },
   "periods": {
     "today": "Hôm nay",
     "yesterday": "Hôm qua",

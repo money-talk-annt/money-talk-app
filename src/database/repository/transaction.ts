@@ -202,6 +202,7 @@ class TransactionRepository {
     category,
     startTime,
     endTime,
+    datePrefix,
     page = 1,
     pageSize = 20,
     sortBy = "transaction_date",
@@ -212,6 +213,7 @@ class TransactionRepository {
     category?: string;
     startTime?: Date;
     endTime?: Date;
+    datePrefix?: string;
     page?: number;
     pageSize?: number;
     sortBy?: "transaction_date" | "amount";
@@ -233,6 +235,14 @@ class TransactionRepository {
     if (category) {
       conditions.push("category = ?");
       params.push(category);
+    }
+
+    if (datePrefix) {
+      conditions.push(
+        "SUBSTR(COALESCE(transactions.transaction_date, transactions.created_at), 1, ?) = ?",
+      );
+      params.push(datePrefix.length);
+      params.push(datePrefix);
     }
 
     if (startTime) {
@@ -273,10 +283,12 @@ class TransactionRepository {
     walletId,
     startTime,
     endTime,
+    datePrefix,
   }: {
     walletId?: number;
     startTime?: Date;
     endTime?: Date;
+    datePrefix?: string;
   } = {}): { totalIncome: number; totalExpense: number } {
     const conditions: string[] = ["deleted_at IS NULL"];
     const params: (string | number)[] = [];
@@ -284,6 +296,13 @@ class TransactionRepository {
     if (walletId) {
       conditions.push("wallet_id = ?");
       params.push(walletId);
+    }
+    if (datePrefix) {
+      conditions.push(
+        "SUBSTR(COALESCE(transactions.transaction_date, transactions.created_at), 1, ?) = ?",
+      );
+      params.push(datePrefix.length);
+      params.push(datePrefix);
     }
     if (startTime) {
       conditions.push("transaction_date >= ?");
@@ -307,6 +326,46 @@ class TransactionRepository {
       totalExpense: number;
     }>(query, params);
     return result || { totalIncome: 0, totalExpense: 0 };
+  }
+
+  getDailySummaryByMonth(
+    yearMonth: string,
+  ): Record<string, { totalIncome: number; totalExpense: number }> {
+    try {
+      const query = `
+        SELECT 
+          SUBSTR(COALESCE(transactions.transaction_date, transactions.created_at), 1, 10) AS dateKey,
+          COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS totalIncome,
+          COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS totalExpense
+        FROM transactions
+        WHERE transactions.deleted_at IS NULL
+          AND SUBSTR(COALESCE(transactions.transaction_date, transactions.created_at), 1, 7) = ?
+        GROUP BY dateKey
+      `;
+
+      const rows = db.getAllSync<{
+        dateKey: string;
+        totalIncome: number;
+        totalExpense: number;
+      }>(query, [yearMonth]);
+
+      const result: Record<
+        string,
+        { totalIncome: number; totalExpense: number }
+      > = {};
+      rows.forEach((row) => {
+        if (row.dateKey) {
+          result[row.dateKey] = {
+            totalIncome: row.totalIncome,
+            totalExpense: row.totalExpense,
+          };
+        }
+      });
+      return result;
+    } catch (error) {
+      console.error("Failed to get daily summary by month:", error);
+      return {};
+    }
   }
 }
 

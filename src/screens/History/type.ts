@@ -15,3 +15,11 @@ export interface HistorySummary {
   totalExpense: number;
   net: number;
 }
+
+export type DailySummary = Record<
+  string,
+  {
+    totalIncome: number;
+    totalExpense: number;
+  }
+>;

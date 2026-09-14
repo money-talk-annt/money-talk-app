@@ -18,6 +18,7 @@ import { mapI18n } from "../../utils/mapI18n";
 import { useHistory } from "./useHistory";
 import { FilterType, TransactionGroup } from "./type";
 import { GetTransaction } from "../../database/repository/transaction";
+import { HistoryCalendar } from "./components/HistoryCalendar";
 import dayjs from "../../utils/dayjs";
 
 const getCategoryIconName = (category: string) => {
@@ -58,6 +59,11 @@ const HistoryScreen = () => {
     t,
     tCommon,
     filter,
+    currentMonth,
+    selectedDate,
+    dailySummaries,
+    monthSummary,
+    isCalendarExpanded,
     transactions,
     groupedTransactions,
     hasMore,
@@ -67,11 +73,21 @@ const HistoryScreen = () => {
     handleRefresh,
     handleEndReached,
     handleSelectFilter,
+    handlePrevMonth,
+    handleNextMonth,
+    handleSelectMonthDate,
+    handleToday,
+    handleSelectDate,
+    handleToggleCalendarExpand,
     handleTransactionPress,
     handleAddTransaction,
   } = useHistory();
 
-  const filterTabs: { type: FilterType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  const filterTabs: {
+    type: FilterType;
+    label: string;
+    icon: keyof typeof Ionicons.glyphMap;
+  }[] = [
     { type: "all", label: t("all"), icon: "list-outline" },
     { type: "income", label: t("income"), icon: "arrow-down-circle-outline" },
     { type: "expense", label: t("expense"), icon: "arrow-up-circle-outline" },
@@ -82,7 +98,6 @@ const HistoryScreen = () => {
   }: {
     section: TransactionGroup;
   }) => {
-    const netDay = section.dayIncome - section.dayExpense;
     return (
       <View style={styles.sectionHeaderContainer}>
         <View style={styles.sectionHeaderBadge}>
@@ -265,113 +280,166 @@ const HistoryScreen = () => {
     );
   };
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* Top Header */}
-      <View style={styles.header}>
-        <Text type="headlineLg" color="text">
-          {t("title")}
-        </Text>
-      </View>
+  const renderListHeader = () => {
+    return (
+      <View>
+        {/* Top Header Title */}
+        <View style={styles.header}>
+          <Text type="headlineLg" color="text">
+            {t("title")}
+          </Text>
+        </View>
 
-      {/* Overview Statistics Card */}
-      <View style={styles.summaryCard}>
-        <Flex justify="space-between" align="center">
-          {/* Income stat */}
-          <View style={styles.summaryItem}>
-            <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
-              <Ionicons
-                name="arrow-down-circle"
-                size={16}
-                color={THEME.colors.secondary}
-              />
-              <Text type="labelSm" color="textSecondary">
-                {t("overview.totalIncome")}
+        {/* Overview Statistics Card */}
+        <View style={styles.summaryCard}>
+          <Flex justify="space-between" align="center">
+            {/* Income stat */}
+            <View style={styles.summaryItem}>
+              <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
+                <Ionicons
+                  name="arrow-down-circle"
+                  size={16}
+                  color={THEME.colors.secondary}
+                />
+                <Text type="labelSm" color="textSecondary">
+                  {t("overview.totalIncome")}
+                </Text>
+              </Flex>
+              <Text type="bodyMdBold" color="secondary" numberOfLines={1}>
+                +{formatCurrency(summary.totalIncome)}
               </Text>
-            </Flex>
-            <Text type="bodyMdBold" color="secondary" numberOfLines={1}>
-              +{formatCurrency(summary.totalIncome)}
-            </Text>
-          </View>
+            </View>
 
-          <View style={styles.summaryDivider} />
+            <View style={styles.summaryDivider} />
 
-          {/* Expense stat */}
-          <View style={styles.summaryItem}>
-            <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
-              <Ionicons
-                name="arrow-up-circle"
-                size={16}
-                color={THEME.colors.expense}
-              />
-              <Text type="labelSm" color="textSecondary">
-                {t("overview.totalExpense")}
+            {/* Expense stat */}
+            <View style={styles.summaryItem}>
+              <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
+                <Ionicons
+                  name="arrow-up-circle"
+                  size={16}
+                  color={THEME.colors.expense}
+                />
+                <Text type="labelSm" color="textSecondary">
+                  {t("overview.totalExpense")}
+                </Text>
+              </Flex>
+              <Text type="bodyMdBold" color="expense" numberOfLines={1}>
+                -{formatCurrency(summary.totalExpense)}
               </Text>
-            </Flex>
-            <Text type="bodyMdBold" color="expense" numberOfLines={1}>
-              -{formatCurrency(summary.totalExpense)}
-            </Text>
-          </View>
+            </View>
 
-          <View style={styles.summaryDivider} />
+            <View style={styles.summaryDivider} />
 
-          {/* Net stat */}
-          <View style={styles.summaryItem}>
-            <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
+            {/* Net stat */}
+            <View style={styles.summaryItem}>
+              <Flex align="center" gap={4} style={{ marginBottom: 4 }}>
+                <Ionicons
+                  name="wallet"
+                  size={16}
+                  color={THEME.colors.primary}
+                />
+                <Text type="labelSm" color="textSecondary">
+                  {t("overview.net")}
+                </Text>
+              </Flex>
+              <Text
+                type="bodyMdBold"
+                color={summary.net >= 0 ? "primary" : "expense"}
+                numberOfLines={1}
+              >
+                {formatCurrency(summary.net)}
+              </Text>
+            </View>
+          </Flex>
+        </View>
+
+        {/* Financial Calendar */}
+        <HistoryCalendar
+          currentMonth={currentMonth}
+          selectedDate={selectedDate}
+          dailySummaries={dailySummaries}
+          monthIncome={monthSummary.totalIncome}
+          monthExpense={monthSummary.totalExpense}
+          isExpanded={isCalendarExpanded}
+          onToggleExpand={handleToggleCalendarExpand}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+          onSelectDate={handleSelectDate}
+          onSelectMonthDate={handleSelectMonthDate}
+          onToday={handleToday}
+          t={t}
+        />
+
+        {/* Filter Tabs */}
+        <View style={styles.filterBar}>
+          {filterTabs.map((item) => {
+            const isActive = filter === item.type;
+            return (
+              <TouchableOpacity
+                key={item.type}
+                activeOpacity={0.7}
+                onPress={() => handleSelectFilter(item.type)}
+                style={[
+                  styles.filterTab,
+                  isActive && styles.filterTabActive,
+                ]}
+              >
+                <Ionicons
+                  name={item.icon}
+                  size={16}
+                  color={
+                    isActive ? THEME.colors.white : THEME.colors.textSecondary
+                  }
+                  style={{ marginRight: 6 }}
+                />
+                <Text
+                  type="labelMdBold"
+                  color={isActive ? "white" : "textSecondary"}
+                >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Active Date Filter Chip (if a specific day is selected) */}
+        {Boolean(selectedDate) && (
+          <View style={styles.activeFilterChipContainer}>
+            <View style={styles.activeFilterChip}>
               <Ionicons
-                name="wallet"
-                size={16}
+                name="funnel"
+                size={14}
                 color={THEME.colors.primary}
-              />
-              <Text type="labelSm" color="textSecondary">
-                {t("overview.net")}
-              </Text>
-            </Flex>
-            <Text
-              type="bodyMdBold"
-              color={summary.net >= 0 ? "primary" : "expense"}
-              numberOfLines={1}
-            >
-              {formatCurrency(summary.net)}
-            </Text>
-          </View>
-        </Flex>
-      </View>
-
-      {/* Filter Tabs */}
-      <View style={styles.filterBar}>
-        {filterTabs.map((item) => {
-          const isActive = filter === item.type;
-          return (
-            <TouchableOpacity
-              key={item.type}
-              activeOpacity={0.7}
-              onPress={() => handleSelectFilter(item.type)}
-              style={[
-                styles.filterTab,
-                isActive && styles.filterTabActive,
-              ]}
-            >
-              <Ionicons
-                name={item.icon}
-                size={16}
-                color={
-                  isActive ? THEME.colors.white : THEME.colors.textSecondary
-                }
                 style={{ marginRight: 6 }}
               />
-              <Text
-                type="labelMdBold"
-                color={isActive ? "white" : "textSecondary"}
-              >
-                {item.label}
+              <Text type="labelSm" color="primary">
+                {t("calendar.selected", {
+                  date: dayjs(selectedDate).format("DD/MM/YYYY"),
+                })}
               </Text>
-            </TouchableOpacity>
-          );
-        })}
+              <TouchableOpacity
+                onPress={() => handleSelectDate(null)}
+                style={{ marginLeft: 8 }}
+                activeOpacity={0.7}
+              >
+                <Ionicons
+                  name="close-circle"
+                  size={16}
+                  color={THEME.colors.primary}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
+    );
+  };
 
-      {/* Main Paginated Section List */}
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      {/* Main Paginated Section List with Header */}
       <SectionList
         sections={groupedTransactions}
         keyExtractor={(item) => String(item.id)}
@@ -389,6 +457,7 @@ const HistoryScreen = () => {
             colors={[THEME.colors.primary]}
           />
         }
+        ListHeaderComponent={renderListHeader}
         ListEmptyComponent={renderEmpty}
         ListFooterComponent={renderFooter}
       />
@@ -408,7 +477,7 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     marginHorizontal: 20,
-    marginTop: 8,
+    marginTop: 4,
     marginBottom: 12,
     padding: 16,
     borderRadius: THEME.radius.lg,
@@ -452,8 +521,22 @@ const styles = StyleSheet.create({
     backgroundColor: THEME.colors.primary,
     borderColor: THEME.colors.primary,
   },
-  listContent: {
+  activeFilterChipContainer: {
     paddingHorizontal: 20,
+    marginBottom: 8,
+  },
+  activeFilterChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: THEME.colors.surfaceLow,
+    borderWidth: 1,
+    borderColor: THEME.colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: THEME.radius.full,
+  },
+  listContent: {
     paddingBottom: 24,
     flexGrow: 1,
   },
@@ -461,6 +544,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
   },
@@ -483,6 +567,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   cardTouchable: {
+    paddingHorizontal: 20,
     marginBottom: 8,
   },
   transactionCard: {
