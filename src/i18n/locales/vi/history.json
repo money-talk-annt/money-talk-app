@@ -1,0 +1,27 @@
+{
+  "title": "Lịch sử giao dịch",
+  "all": "Tất cả",
+  "income": "Thu nhập",
+  "expense": "Chi tiêu",
+  "overview": {
+    "totalIncome": "Tổng thu",
+    "totalExpense": "Tổng chi",
+    "net": "Chênh lệch"
+  },
+  "periods": {
+    "today": "Hôm nay",
+    "yesterday": "Hôm qua",
+    "earlier": "Trước đó"
+  },
+  "empty": {
+    "title": "Chưa có giao dịch nào",
+    "subtitle": "Các giao dịch thu chi của bạn sẽ xuất hiện tại đây.",
+    "addTransaction": "+ Thêm giao dịch"
+  },
+  "loadingMore": "Đang tải thêm giao dịch...",
+  "noMore": "Đã hiển thị tất cả giao dịch",
+  "daySummary": {
+    "income": "Thu: +{{amount}}",
+    "expense": "Chi: -{{amount}}"
+  }
+}

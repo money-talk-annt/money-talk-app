@@ -1,0 +1,27 @@
+{
+  "title": "Transaction History",
+  "all": "All",
+  "income": "Income",
+  "expense": "Expense",
+  "overview": {
+    "totalIncome": "Income",
+    "totalExpense": "Expense",
+    "net": "Net"
+  },
+  "periods": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "earlier": "Earlier"
+  },
+  "empty": {
+    "title": "No transactions found",
+    "subtitle": "Your recorded income and expenses will appear here.",
+    "addTransaction": "+ Add Transaction"
+  },
+  "loadingMore": "Loading more transactions...",
+  "noMore": "All transactions loaded",
+  "daySummary": {
+    "income": "In: +{{amount}}",
+    "expense": "Out: -{{amount}}"
+  }
+}

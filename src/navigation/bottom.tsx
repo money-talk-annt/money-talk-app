@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import History from "../screens/Transaction";
+import History from "../screens/History";
 import Analysis from "../screens/Analysis";
 import { Ionicons } from "@expo/vector-icons";
 import { DashboardNested, ProfileNested } from "./nested";
@@ -24,7 +24,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>({
     History: {
       screen: History,
       options: {
-        headerShown: true,
+        headerShown: false,
         tabBarLabel: "History",
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="book-outline" size={size} color={color} />

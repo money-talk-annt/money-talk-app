@@ -247,13 +247,19 @@ class TransactionRepository {
 
     const offset = (page - 1) * pageSize;
 
+    const orderExpr =
+      sortBy === "transaction_date"
+        ? "COALESCE(transactions.transaction_date, transactions.created_at)"
+        : `transactions.${sortBy}`;
+
     const query = `
-        SELECT transactions.id AS id, type, amount, category, note, transactions.transaction_date AS transactionDate, 
+        SELECT transactions.id AS id, type, amount, category, note, 
+        COALESCE(transactions.transaction_date, transactions.created_at) AS transactionDate, 
         wallets.name AS walletName
         FROM transactions
         INNER JOIN wallets ON transactions.wallet_id = wallets.id
         WHERE ${conditions.join(" AND ")}
-        ORDER BY ${sortBy} ${sortOrder}
+        ORDER BY ${orderExpr} ${sortOrder}
         LIMIT ? OFFSET ?
     `;
 
@@ -261,6 +267,46 @@ class TransactionRepository {
     params.push(offset);
 
     return db.getAllSync(query, params);
+  }
+
+  getSummary({
+    walletId,
+    startTime,
+    endTime,
+  }: {
+    walletId?: number;
+    startTime?: Date;
+    endTime?: Date;
+  } = {}): { totalIncome: number; totalExpense: number } {
+    const conditions: string[] = ["deleted_at IS NULL"];
+    const params: (string | number)[] = [];
+
+    if (walletId) {
+      conditions.push("wallet_id = ?");
+      params.push(walletId);
+    }
+    if (startTime) {
+      conditions.push("transaction_date >= ?");
+      params.push(startTime.toISOString());
+    }
+    if (endTime) {
+      conditions.push("transaction_date <= ?");
+      params.push(endTime.toISOString());
+    }
+
+    const query = `
+      SELECT 
+        COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS totalIncome,
+        COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS totalExpense
+      FROM transactions
+      WHERE ${conditions.join(" AND ")}
+    `;
+
+    const result = db.getFirstSync<{
+      totalIncome: number;
+      totalExpense: number;
+    }>(query, params);
+    return result || { totalIncome: 0, totalExpense: 0 };
   }
 }
 
