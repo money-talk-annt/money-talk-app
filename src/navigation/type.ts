@@ -18,8 +18,10 @@ export type RootTabParamList = {
   Profile: NavigatorScreenParams<ProfileStackParamList>;
 };
 
-type RouteName = 'Home' | 'TransactionRoot' | 'TransactionDetail'
-
-
-
-export type RootStackParamList = Record<RouteName, undefined>;
+export type RootStackParamList = {
+  Home: NavigatorScreenParams<RootTabParamList>;
+  TransactionRoot: undefined;
+  TransactionDetail: undefined;
+  Wallet: undefined;
+  AddWallet: undefined;
+};

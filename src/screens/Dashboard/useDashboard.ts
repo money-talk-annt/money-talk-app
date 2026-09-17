@@ -87,11 +87,21 @@ const useDashboard = () => {
   );
 
   const handleNavigateToWallets = useCallback(() => {
-    (navigation as any).navigate("Profile", { screen: "Wallet" });
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      (parentNav as any).navigate(PATHNAME.WALLET);
+    } else {
+      (navigation as any).navigate(PATHNAME.WALLET);
+    }
   }, [navigation]);
 
   const handleNavigateToAddWallet = useCallback(() => {
-    (navigation as any).navigate("Profile", { screen: "AddWallet" });
+    const parentNav = navigation.getParent();
+    if (parentNav) {
+      (parentNav as any).navigate(PATHNAME.ADDWALLET);
+    } else {
+      (navigation as any).navigate(PATHNAME.ADDWALLET);
+    }
   }, [navigation]);
 
   const handleNavigateToHistory = useCallback(() => {

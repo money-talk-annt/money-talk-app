@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useRef } from "react";
 import {
   View,
   ScrollView,
@@ -21,6 +21,7 @@ import { mapI18n } from "../../utils/mapI18n";
 import dayjs from "../../utils/dayjs";
 import { GetTransaction } from "../../database/repository/transaction";
 import { GetWallet } from "../../database/repository/wallet";
+import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
 
 const getCategoryColor = (category: string): string => {
   switch (category) {
@@ -54,7 +55,9 @@ const getCategoryColor = (category: string): string => {
   }
 };
 
-const getCategoryIconName = (category: string): keyof typeof Ionicons.glyphMap => {
+const getCategoryIconName = (
+  category: string,
+): keyof typeof Ionicons.glyphMap => {
   switch (category) {
     case "food":
       return "fast-food-outline";
@@ -110,9 +113,20 @@ function DashboardScreen() {
     formattedDate,
   } = useDashboard();
 
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
+
+  // Scroll to top whenever this screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo?.({ y: 0, animated: false });
+    }, []),
+  );
+
   return (
     <Box bgColor="background" style={styles.container}>
       <ScrollView
+        ref={scrollRef}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -255,89 +269,6 @@ function DashboardScreen() {
           </View>
         </View>
 
-        {/* ==================== 3. QUICK ACTIONS ==================== */}
-        <View style={styles.quickActionsContainer}>
-          {/* Add Income */}
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={() => handleOpenAddTransaction("income")}
-            style={styles.quickActionItem}
-          >
-            <View
-              style={[
-                styles.quickActionIconCircle,
-                { backgroundColor: "#ECFDF5", borderColor: "#A7F3D0" },
-              ]}
-            >
-              <Ionicons name="add" size={24} color="#059669" />
-            </View>
-            <Text type="labelSm" color="text" style={styles.quickActionLabel}>
-              {t("quickActions.income")}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Add Expense */}
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={() => handleOpenAddTransaction("expense")}
-            style={styles.quickActionItem}
-          >
-            <View
-              style={[
-                styles.quickActionIconCircle,
-                { backgroundColor: "#FEF2F2", borderColor: "#FECACA" },
-              ]}
-            >
-              <Ionicons name="remove" size={24} color="#DC2626" />
-            </View>
-            <Text type="labelSm" color="text" style={styles.quickActionLabel}>
-              {t("quickActions.expense")}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Wallets */}
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={handleNavigateToWallets}
-            style={styles.quickActionItem}
-          >
-            <View
-              style={[
-                styles.quickActionIconCircle,
-                { backgroundColor: "#EEF2FF", borderColor: "#C7D2FE" },
-              ]}
-            >
-              <Ionicons
-                name="wallet-outline"
-                size={22}
-                color={THEME.colors.primary}
-              />
-            </View>
-            <Text type="labelSm" color="text" style={styles.quickActionLabel}>
-              {t("quickActions.wallets")}
-            </Text>
-          </TouchableOpacity>
-
-          {/* History */}
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={handleNavigateToHistory}
-            style={styles.quickActionItem}
-          >
-            <View
-              style={[
-                styles.quickActionIconCircle,
-                { backgroundColor: "#F5F3FF", borderColor: "#DDD6FE" },
-              ]}
-            >
-              <Ionicons name="time-outline" size={22} color="#7C3AED" />
-            </View>
-            <Text type="labelSm" color="text" style={styles.quickActionLabel}>
-              {t("quickActions.history")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
         {/* ==================== 4. MY WALLETS CAROUSEL ==================== */}
         <View style={styles.sectionHeader}>
           <Flex align="center" gap={8}>
@@ -372,7 +303,10 @@ function DashboardScreen() {
         >
           {wallets.map((item: GetWallet) => {
             const ComponentIcon = icons[(item.icon || "cash") as IconName];
-            const walletBg = withOpacity(0.12, item.color || THEME.colors.primary);
+            const walletBg = withOpacity(
+              0.12,
+              item.color || THEME.colors.primary,
+            );
 
             return (
               <TouchableOpacity
@@ -381,7 +315,12 @@ function DashboardScreen() {
                 onPress={handleNavigateToWallets}
                 style={[
                   styles.walletCard,
-                  { borderColor: withOpacity(0.25, item.color || THEME.colors.primary) },
+                  {
+                    borderColor: withOpacity(
+                      0.25,
+                      item.color || THEME.colors.primary,
+                    ),
+                  },
                 ]}
               >
                 <View style={styles.walletCardHeader}>
@@ -447,11 +386,7 @@ function DashboardScreen() {
             style={styles.addWalletCard}
           >
             <View style={styles.addWalletIconCircle}>
-              <Ionicons
-                name="add"
-                size={22}
-                color={THEME.colors.primary}
-              />
+              <Ionicons name="add" size={22} color={THEME.colors.primary} />
             </View>
             <Text type="labelSm" color="primary" style={styles.addWalletText}>
               {t("addNewWallet")}
@@ -490,10 +425,7 @@ function DashboardScreen() {
                 key={tab}
                 activeOpacity={0.75}
                 onPress={() => setRecentFilter(tab)}
-                style={[
-                  styles.filterPill,
-                  isActive && styles.filterPillActive,
-                ]}
+                style={[styles.filterPill, isActive && styles.filterPillActive]}
               >
                 <Text
                   type="labelSm"
@@ -518,11 +450,7 @@ function DashboardScreen() {
                   color={THEME.colors.textSecondary}
                 />
               </View>
-              <Text
-                type="labelMdBold"
-                color="text"
-                style={styles.emptyTitle}
-              >
+              <Text type="labelMdBold" color="text" style={styles.emptyTitle}>
                 {t("empty.title")}
               </Text>
               <Text
@@ -579,11 +507,7 @@ function DashboardScreen() {
                       </View>
 
                       <View style={{ flex: 1 }}>
-                        <Text
-                          numberOfLines={1}
-                          type="bodyMdBold"
-                          color="text"
-                        >
+                        <Text numberOfLines={1} type="bodyMdBold" color="text">
                           {categoryName}
                         </Text>
                         <Flex align="center" gap={6} style={{ marginTop: 2 }}>

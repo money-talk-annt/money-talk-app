@@ -11,6 +11,8 @@ declare global {
     Home: NavigatorScreenParams<RootTabParamList>;
     TransactionRoot: undefined;
     TransactionDetail: { id: number };
+    Wallet: undefined;
+    AddWallet: undefined;
   };
 
   type AppNavigation = CompositeNavigationProp<

@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useTranslation } from '../hooks/useTranslation';
 import LanguageSwitcher from '../components/LanguageSwitcher';
-import { Button } from '@react-navigation/elements';
 import { PATHNAME } from '../constants/pathname';
+import { useFocusEffect, useNavigation, useScrollToTop } from '@react-navigation/native';
 
 export default function Profile() {
   const { t } = useTranslation('profile');
+  const navigation = useNavigation<AppNavigation>();
+  const scrollRef = useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
+
+  useFocusEffect(
+    useCallback(() => {
+      scrollRef.current?.scrollTo?.({ y: 0, animated: false });
+    }, []),
+  );
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView ref={scrollRef} style={styles.container}>
       <Text style={styles.title}>{t('title')}</Text>
       
       <View style={styles.section}>
@@ -31,17 +40,21 @@ export default function Profile() {
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>{t('currency')}</Text>
           <Text style={styles.settingValue}>USD ($)</Text>
-          <Button screen={PATHNAME.WALLET}>
-            Go to wallet
-          </Button>
+          <TouchableOpacity
+            onPress={() => (navigation as any).navigate(PATHNAME.WALLET)}
+          >
+            <Text style={styles.linkText}>Go to wallet</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>Add wallet</Text>
           <Text style={styles.settingValue} />
-          <Button screen={PATHNAME.ADDWALLET}>
-            Add Wallet
-          </Button>
+          <TouchableOpacity
+            onPress={() => (navigation as any).navigate(PATHNAME.ADDWALLET)}
+          >
+            <Text style={styles.linkText}>Add Wallet</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.settingItem}>
@@ -122,5 +135,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#fff',
+  },
+  linkText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#007AFF',
   },
 });

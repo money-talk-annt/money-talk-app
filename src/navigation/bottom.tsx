@@ -84,6 +84,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>({
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="person" size={size} color={color} />
         ),
+        popToTopOnBlur: true,
       },
     },
   },
