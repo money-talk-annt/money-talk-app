@@ -4,15 +4,10 @@ export const initDatabase = () => {
   const result = db.getFirstSync<{ user_version: number }>(
     "PRAGMA user_version",
   );
-  const currentVersion = result?.user_version;
+  const currentVersion = result?.user_version ?? 0;
 
-  // if (currentVersion && currentVersion > 1) {
-  //   return;
-  // }
-
-
-    // Ensure foreign key constraints are enforced
-    db.execSync(`PRAGMA foreign_keys = ON;`);
+  // Ensure foreign key constraints are enforced
+  db.execSync(`PRAGMA foreign_keys = ON;`);
 
   db.execSync(`
     CREATE TABLE IF NOT EXISTS wallets (
@@ -39,7 +34,7 @@ export const initDatabase = () => {
       amount REAL NOT NULL,
       category TEXT,
       note TEXT,
-      transaction_date TEXT, -- Ensure transaction_date is included
+      transaction_date TEXT,
       created_at TEXT DEFAULT CURRENT_TIMESTAMP,
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
       deleted_at TEXT DEFAULT NULL
@@ -47,9 +42,6 @@ export const initDatabase = () => {
 
     CREATE INDEX IF NOT EXISTS idx_transactions_wallet 
     ON transactions(wallet_id);
-      -- enforce referential integrity
-      -- add foreign key constraint if table is created new (SQLite requires it in create statement)
-      -- Note: If you need strict migration for existing DBs, perform ALTER logic separately.
 
     CREATE TRIGGER IF NOT EXISTS update_transactions_updated_at
     AFTER UPDATE ON transactions
@@ -57,5 +49,17 @@ export const initDatabase = () => {
       UPDATE transactions SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
     END;
   `);
-  db.execSync(`PRAGMA user_version = 1;`);
+
+  // Migration v2: Add image_uri column for Locket Mode
+  if (currentVersion < 2) {
+    try {
+      db.execSync(
+        `ALTER TABLE transactions ADD COLUMN image_uri TEXT DEFAULT NULL;`,
+      );
+    } catch {
+      // Column may already exist if migration was partially applied
+    }
+  }
+
+  db.execSync(`PRAGMA user_version = 2;`);
 };

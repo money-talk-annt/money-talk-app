@@ -1,5 +1,6 @@
 {
     "title": "Thêm ví mới",
+    "edit_title": "Chỉnh sửa ví",
 
     "card": {
       "wallet_name_label": "Tên ví",
@@ -24,7 +25,8 @@
     },
 
     "actions": {
-      "save": "Lưu ví"
+      "save": "Lưu ví",
+      "update": "Cập nhật ví"
     },
 
     "errors":{

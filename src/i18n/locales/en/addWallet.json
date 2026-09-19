@@ -1,5 +1,6 @@
 {
     "title": "New Wallet",
+    "edit_title": "Edit Wallet",
 
     "card": {
       "wallet_name_label": "Wallet Name",
@@ -24,7 +25,8 @@
     },
 
     "actions": {
-      "save": "Save Wallet"
+      "save": "Save Wallet",
+      "update": "Update Wallet"
     },
 
     "errors":{

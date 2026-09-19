@@ -30,12 +30,53 @@
   },
   "success": "Giao dịch đã được lưu",
   "failure": "Thất bại khi lưu giao dịch",
+  "editTitle": "Chỉnh sửa giao dịch",
+  "update": "CẬP NHẬT GIAO DỊCH",
+  "updateSuccess": "Đã cập nhật giao dịch thành công",
+  "updateFailure": "Cập nhật giao dịch thất bại",
 
   "detail": {
     "title": "Chi tiết giao dịch",
-    "date": "Ngày",
-    "wallet": "Ví",
+    "date": "Ngày & Giờ",
+    "wallet": "Ví thanh toán",
+    "category": "Danh mục",
+    "type": "Loại giao dịch",
     "note": "Ghi chú",
-    "delete": "Xóa"
+    "noNote": "Không có ghi chú",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa giao dịch",
+    "deleteConfirmTitle": "Xác nhận xóa giao dịch",
+    "deleteConfirmMessage": "Số tiền này sẽ được hoàn trả/cập nhật lại vào ví. Bạn có chắc chắn muốn xóa giao dịch này không?",
+    "deleteSuccess": "Đã xóa giao dịch thành công",
+    "notFound": "Không tìm thấy thông tin giao dịch"
+  },
+
+  "locket": {
+    "cameraPermissionTitle": "Cần quyền truy cập Camera",
+    "cameraPermissionDesc": "Cho phép truy cập camera để chụp ảnh giao dịch của bạn",
+    "allowCamera": "Cho phép Camera",
+    "cancel": "Hủy",
+    "captureHint": "Chụp ảnh giao dịch của bạn",
+    "retake": "Chụp lại",
+    "photoSaveFailed": "Lưu ảnh thất bại",
+    "amountRequiredTitle": "Số tiền chưa nhập",
+    "amountRequiredMessage": "Vui lòng nhập số tiền cho giao dịch Locket của bạn nhé! ✨",
+    "enterNow": "Nhập ngay",
+    "squareFrame": "Khung chụp 1:1",
+    "amountIncome": "SỐ TIỀN THU",
+    "amountExpense": "SỐ TIỀN CHI",
+    "amountIncomeTitle": "Số tiền thu",
+    "amountExpenseTitle": "Số tiền chi",
+    "notePlaceholder": "Thêm ghi chú giao dịch...",
+    "framingHint": "Căn chỉnh khung hình & bấm nút chụp",
+    "done": "Xong",
+    "tags": {
+      "food": "Ăn uống",
+      "coffee": "Cà phê",
+      "transport": "Di chuyển",
+      "shopping": "Mua sắm",
+      "entertainment": "Giải trí",
+      "bill": "Hóa đơn"
+    }
   }
 }

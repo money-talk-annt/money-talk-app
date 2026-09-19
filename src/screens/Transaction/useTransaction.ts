@@ -5,7 +5,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { TabItem } from "../../components/Tab";
 import { useTransactionForm } from "./useTransactionForm";
@@ -15,11 +20,16 @@ import { GetWallet, walletRepo } from "../../database/repository/wallet";
 import { THEME } from "../../theme";
 import { Alert } from "react-native";
 import { transactionRepo } from "../../database/repository/transaction";
+import { formatCurrencyInput } from "../../utils/formatCurrency";
 
 export type TypeState = "income" | "expense";
 
 export const useTransaction = () => {
   const navigation = useNavigation<AppNavigation>();
+  const route = useRoute<RouteProp<RootStackParamList, "TransactionRoot">>();
+  const transactionId = route.params?.transactionId;
+  const isEditMode = Boolean(transactionId);
+
   const { t } = useTranslation("transaction");
   const { t: tCommon } = useTranslation("common");
   const {
@@ -72,9 +82,28 @@ export const useTransaction = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: t("title"),
+      title: isEditMode ? t("editTitle") : t("title"),
     });
-  }, [navigation, t]);
+  }, [navigation, t, isEditMode]);
+
+  // If in edit mode, prefill form with existing transaction data
+  useEffect(() => {
+    if (transactionId) {
+      const tx = transactionRepo.getById(transactionId);
+      if (tx) {
+        setValue("type", tx.type);
+        setValue("amount", formatCurrencyInput(String(tx.amount)));
+        setValue("category", tx.category as IconName);
+        if (tx.wallet_id) {
+          setValue("walletId", tx.wallet_id);
+        }
+        if (tx.transactionDate) {
+          setValue("date", new Date(tx.transactionDate));
+        }
+        setValue("note", tx.note || "");
+      }
+    }
+  }, [transactionId, setValue]);
 
   useFocusEffect(
     useCallback(() => {
@@ -109,13 +138,13 @@ export const useTransaction = () => {
       return [icons[walletIcon?.icon as IconName], walletIcon?.color];
     }
     return [icons.wallet, THEME.colors.secondary];
-  }, [walletId]);
+  }, [walletId, wallets]);
 
   useLayoutEffect(() => {
-    if (!walletId && wallets) {
+    if (!walletId && wallets && !isEditMode) {
       setValue("walletId", wallets?.[0]?.id);
     }
-  }, [wallets, walletId]);
+  }, [wallets, walletId, isEditMode, setValue]);
 
   const handleSelectWallet = useCallback(
     (id: number) => {
@@ -162,28 +191,63 @@ export const useTransaction = () => {
             ? amount.replaceAll(".", "").replace(",", ".")
             : String(amount),
         );
-        transactionRepo.createWithWalletUpdate({
-          wallet_id: walletId,
-          type,
-          amount: numAmount,
-          category,
-          note: note || undefined,
-          transaction_date: date ? date.toISOString() : undefined,
-        });
 
-        reset();
-        Alert.alert(t("announment.title"), t("success"));
+        if (isEditMode && transactionId) {
+          transactionRepo.updateWithWalletUpdate(transactionId, {
+            wallet_id: walletId,
+            type,
+            amount: numAmount,
+            category,
+            note: note || undefined,
+            transaction_date: date ? date.toISOString() : undefined,
+          });
+          Alert.alert(t("announment.title"), t("updateSuccess"), [
+            {
+              text: "OK",
+              onPress: () => navigation.goBack(),
+            },
+          ]);
+        } else {
+          transactionRepo.createWithWalletUpdate({
+            wallet_id: walletId,
+            type,
+            amount: numAmount,
+            category,
+            note: note || undefined,
+            transaction_date: date ? date.toISOString() : undefined,
+          });
+
+          reset();
+          Alert.alert(t("announment.title"), t("success"), [
+            {
+              text: "OK",
+              onPress: () => navigation.goBack(),
+            },
+          ]);
+        }
       } catch (error) {
         console.error(error);
-        Alert.alert(t("announment.title"), t("failure"));
+        Alert.alert(
+          t("announment.title"),
+          isEditMode ? t("updateFailure") : t("failure"),
+        );
       }
     }),
-    [handleSubmit, transactionRepo, reset, t],
+    [
+      handleSubmit,
+      transactionRepo,
+      reset,
+      t,
+      isEditMode,
+      transactionId,
+      navigation,
+    ],
   );
 
   return {
     t,
     type,
+    isEditMode,
     wallets,
     navigation,
     tabItems,

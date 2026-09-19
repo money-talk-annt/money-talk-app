@@ -29,6 +29,9 @@ export const ProfileNested = createNativeStackNavigator({
       },
     },
     ProfileStack: {
+      options: {
+        headerShown: false,
+      },
       screen: Profile,
     },
   },
@@ -44,4 +47,3 @@ export const DashboardNested = createNativeStackNavigator({
     },
   },
 });
-

@@ -1,5 +1,14 @@
 {
   "title": "Ví của tôi",
   "total": "Tổng Tiền",
-  "allWallet": "Tất cả ví"
+  "allWallet": "Tất cả ví",
+  "edit_wallet": "Chỉnh sửa ví",
+  "delete_wallet": "Xóa ví",
+  "delete_confirm_title": "Xác nhận xóa ví",
+  "delete_confirm_desc": "Số dư {{amount}} và toàn bộ giao dịch sẽ được chuyển vào ví '{{targetWallet}}'. Bạn có chắc chắn muốn xóa ví '{{walletName}}'?",
+  "delete_success": "Đã xóa ví thành công",
+  "cannot_delete_last_title": "Không thể xóa",
+  "cannot_delete_last_desc": "Ứng dụng cần ít nhất 1 ví hoạt động. Bạn không thể xóa ví cuối cùng.",
+  "cancel": "Hủy",
+  "delete": "Xóa"
 }

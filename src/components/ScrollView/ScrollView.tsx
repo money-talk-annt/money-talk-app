@@ -6,6 +6,7 @@ import { ScrollViewCTProps } from "./type";
 import { ScrollView } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
+import { checkAndResetSkipScrollToTop } from "../../utils/navigationScrollHelper";
 
 const Scroll = memo(
   ({
@@ -19,10 +20,12 @@ const Scroll = memo(
     const scrollRef = useRef<any>(null);
     useScrollToTop(scrollRef);
 
-    // Scroll to top whenever this screen gains focus
+    // Scroll to top whenever this screen gains focus (unless returning from child screens like detail)
     useFocusEffect(
       useCallback(() => {
         if (!isScreen) return;
+        if (checkAndResetSkipScrollToTop()) return;
+
         const current = scrollRef.current;
         if (!current) return;
 
@@ -65,4 +68,3 @@ const Scroll = memo(
 );
 
 export { Scroll };
-

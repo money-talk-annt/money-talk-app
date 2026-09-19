@@ -21,6 +21,19 @@
     "trending": "Kinh doanh",
     "pc": "Freelance",
     "bank": "Lãi tiết kiệm",
-    "sale": "Bán hàng"
+    "sale": "Bán hàng",
+    "locket": "Ảnh chụp"
+  },
+  "bottomNav": {
+    "dashboard": "Tổng quan",
+    "history": "Lịch sử",
+    "analytics": "Phân tích",
+    "profile": "Cá nhân"
+  },
+  "addTransaction": {
+    "title": "Thêm giao dịch",
+    "regular": "📝 Thêm thường",
+    "photo": "📸 Chụp ảnh (Locket)",
+    "cancel": "Hủy"
   }
 }

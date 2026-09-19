@@ -9,10 +9,10 @@ import { RootTabParamList } from "../navigation/type";
 declare global {
   type RootStackParamList = {
     Home: NavigatorScreenParams<RootTabParamList>;
-    TransactionRoot: undefined;
+    TransactionRoot: { transactionId?: number } | undefined;
     TransactionDetail: { id: number };
     Wallet: undefined;
-    AddWallet: undefined;
+    AddWallet: { walletId?: number } | undefined;
   };
 
   type AppNavigation = CompositeNavigationProp<

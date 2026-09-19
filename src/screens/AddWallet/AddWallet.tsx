@@ -27,6 +27,7 @@ const AddWallet = memo(() => {
     isSubmitting,
     ballance,
     walletName,
+    isEditMode,
     handleSubmitForm,
     handleOnChangeBallance,
   } = useAddWallet();
@@ -123,7 +124,7 @@ const AddWallet = memo(() => {
         </Box>
 
         <Button
-          title={t("actions.save")}
+          title={isEditMode ? t("actions.update") : t("actions.save")}
           loading={isSubmitting}
           disabled={!isValid}
           onPress={handleSubmitForm}

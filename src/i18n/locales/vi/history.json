@@ -29,6 +29,8 @@
   },
   "loadingMore": "Đang tải thêm giao dịch...",
   "noMore": "Đã hiển thị tất cả giao dịch",
+  "locketPhoto": "📸 Ảnh chụp",
+  "locketEmpty": "Chưa có giao dịch ảnh nào",
   "daySummary": {
     "income": "Thu: +{{amount}}",
     "expense": "Chi: -{{amount}}"

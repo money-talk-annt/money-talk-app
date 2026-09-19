@@ -21,6 +21,19 @@
     "trending": "Business",
     "pc": "Freelance",
     "bank": "Savings Interest",
-    "sale": "Sales"
+    "sale": "Sales",
+    "locket": "Photo"
+  },
+  "bottomNav": {
+    "dashboard": "Dashboard",
+    "history": "History",
+    "analytics": "Analytics",
+    "profile": "Profile"
+  },
+  "addTransaction": {
+    "title": "Add Transaction",
+    "regular": "📝 Standard",
+    "photo": "📸 Photo (Locket)",
+    "cancel": "Cancel"
   }
 }

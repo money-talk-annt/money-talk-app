@@ -6,6 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
   Platform,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,74 +22,7 @@ import { mapI18n } from "../../utils/mapI18n";
 import dayjs from "../../utils/dayjs";
 import { GetTransaction } from "../../database/repository/transaction";
 import { GetWallet } from "../../database/repository/wallet";
-import { useScrollToTop, useFocusEffect } from "@react-navigation/native";
-
-const getCategoryColor = (category: string): string => {
-  switch (category) {
-    case "food":
-      return "#F59E0B";
-    case "car":
-      return "#3B82F6";
-    case "bag":
-      return "#EC4899";
-    case "home":
-      return "#8B5CF6";
-    case "health":
-      return "#EF4444";
-    case "coffee":
-      return "#D97706";
-    case "cash":
-    case "trending":
-      return "#10B981";
-    case "gift":
-      return "#F43F5E";
-    case "bank":
-      return "#6366F1";
-    case "sale":
-      return "#06B6D4";
-    case "pc":
-      return "#64748B";
-    case "refund":
-      return "#14B8A6";
-    default:
-      return THEME.colors.primary;
-  }
-};
-
-const getCategoryIconName = (
-  category: string,
-): keyof typeof Ionicons.glyphMap => {
-  switch (category) {
-    case "food":
-      return "fast-food-outline";
-    case "car":
-      return "car-outline";
-    case "bag":
-      return "bag-handle-outline";
-    case "home":
-      return "home-outline";
-    case "health":
-      return "fitness-outline";
-    case "coffee":
-      return "cafe-outline";
-    case "cash":
-      return "cash-outline";
-    case "gift":
-      return "gift-outline";
-    case "bank":
-      return "business-outline";
-    case "sale":
-      return "pricetag-outline";
-    case "pc":
-      return "laptop-outline";
-    case "refund":
-      return "arrow-undo-outline";
-    case "trending":
-      return "trending-up-outline";
-    default:
-      return "receipt-outline";
-  }
-};
+import { Scroll } from "../../components/ScrollView/ScrollView";
 
 function DashboardScreen() {
   const insets = useSafeAreaInsets();
@@ -113,21 +47,10 @@ function DashboardScreen() {
     formattedDate,
   } = useDashboard();
 
-  const scrollRef = useRef<ScrollView>(null);
-  useScrollToTop(scrollRef);
-
-  // Scroll to top whenever this screen gains focus
-  useFocusEffect(
-    useCallback(() => {
-      scrollRef.current?.scrollTo?.({ y: 0, animated: false });
-    }, []),
-  );
-
   return (
     <Box bgColor="background" style={styles.container}>
-      <ScrollView
-        ref={scrollRef}
-        showsVerticalScrollIndicator={false}
+      <Scroll
+        isScreen
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -474,12 +397,17 @@ function DashboardScreen() {
           ) : (
             transactions.map((item: GetTransaction) => {
               const isIncome = item.type === "income";
+              const isLocket = Boolean(
+                item.image_uri || item.category === "locket",
+              );
               const categoryKey = mapI18n(item.category);
-              const categoryName = categoryKey
-                ? tCommon(categoryKey)
-                : item.category;
-              const iconName = getCategoryIconName(item.category);
-              const accentColor = getCategoryColor(item.category);
+              const categoryName = isLocket
+                ? item.note || tCommon("categories.locket") || "Ảnh chụp"
+                : categoryKey
+                  ? tCommon(categoryKey)
+                  : item.category;
+              const ComponentIcon =
+                icons[(item.category || "cash") as IconName] || icons.cash;
               const timeFormatted = item.transactionDate
                 ? dayjs(item.transactionDate).format("HH:mm")
                 : "";
@@ -493,23 +421,70 @@ function DashboardScreen() {
                 >
                   <Flex align="center" justify="space-between" gap={12}>
                     <Flex align="center" gap={12} style={{ flex: 1 }}>
-                      <View
-                        style={[
-                          styles.transactionIconBox,
-                          { backgroundColor: withOpacity(0.12, accentColor) },
-                        ]}
-                      >
-                        <Ionicons
-                          name={iconName}
-                          size={20}
-                          color={accentColor}
+                      {isLocket && item.image_uri ? (
+                        <Image
+                          source={{ uri: item.image_uri }}
+                          style={styles.locketThumbnail}
+                          resizeMode="cover"
                         />
-                      </View>
+                      ) : (
+                        <View
+                          style={[
+                            styles.transactionIconBox,
+                            {
+                              backgroundColor: isIncome
+                                ? THEME.colors.bgSecondary
+                                : THEME.colors.bgPrimary,
+                            },
+                          ]}
+                        >
+                          {isLocket ? (
+                            <Ionicons
+                              name="camera"
+                              size={20}
+                              color={
+                                isIncome
+                                  ? THEME.colors.secondary
+                                  : THEME.colors.primary
+                              }
+                            />
+                          ) : (
+                            <ComponentIcon
+                              height={24}
+                              width={24}
+                              color={
+                                isIncome
+                                  ? THEME.colors.secondary
+                                  : THEME.colors.primary
+                              }
+                            />
+                          )}
+                        </View>
+                      )}
 
                       <View style={{ flex: 1 }}>
-                        <Text numberOfLines={1} type="bodyMdBold" color="text">
-                          {categoryName}
-                        </Text>
+                        <Flex align="center" gap={6}>
+                          <Text
+                            numberOfLines={1}
+                            type="bodyMdBold"
+                            color="text"
+                            style={{ flexShrink: 1 }}
+                          >
+                            {categoryName}
+                          </Text>
+                          {isLocket && (
+                            <View style={styles.locketTag}>
+                              <Ionicons
+                                name="camera-outline"
+                                size={10}
+                                color={THEME.colors.primary}
+                                style={{ marginRight: 3 }}
+                              />
+                              <Text style={styles.locketTagText}>Locket</Text>
+                            </View>
+                          )}
+                        </Flex>
+
                         <Flex align="center" gap={6} style={{ marginTop: 2 }}>
                           {item.walletName ? (
                             <View style={styles.walletPill}>
@@ -541,7 +516,7 @@ function DashboardScreen() {
             })
           )}
         </View>
-      </ScrollView>
+      </Scroll>
     </Box>
   );
 }
@@ -897,6 +872,25 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
+  },
+  locketThumbnail: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: THEME.colors.surfaceLow,
+  },
+  locketTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(93, 95, 239, 0.12)",
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+  },
+  locketTagText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: THEME.colors.primary,
   },
   walletPill: {
     backgroundColor: THEME.colors.surfaceLow,

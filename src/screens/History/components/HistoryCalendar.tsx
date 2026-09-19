@@ -8,6 +8,7 @@ import { THEME } from "../../../theme";
 import Text from "../../../components/Text";
 import Flex from "../../../components/Flex/Flex";
 import { DailySummary } from "../type";
+import { formatCompactAmount } from "../../../utils/formatCurrency";
 
 interface HistoryCalendarProps {
   currentMonth: Dayjs;
@@ -24,20 +25,6 @@ interface HistoryCalendarProps {
   onToday: () => void;
   t: any;
 }
-
-export const formatCompactAmount = (amount: number): string => {
-  if (!amount || amount === 0) return "0";
-  if (amount >= 1_000_000_000) {
-    return `${(amount / 1_000_000_000).toFixed(1).replace(".0", "")}B`;
-  }
-  if (amount >= 1_000_000) {
-    return `${(amount / 1_000_000).toFixed(1).replace(".0", "")}M`;
-  }
-  if (amount >= 1_000) {
-    return `${Math.round(amount / 1_000)}k`;
-  }
-  return `${amount}`;
-};
 
 const HistoryCalendarComponent = ({
   currentMonth,
@@ -107,7 +94,10 @@ const HistoryCalendarComponent = ({
       const dateObj = currentMonth.date(d);
       const dateKey = dateObj.format("YYYY-MM-DD");
       const isFuture = dateObj.isAfter(todayDate, "day");
-      const summary = dailySummaries[dateKey] || { totalIncome: 0, totalExpense: 0 };
+      const summary = dailySummaries[dateKey] || {
+        totalIncome: 0,
+        totalExpense: 0,
+      };
 
       days.push({
         dayNumber: d,
@@ -209,9 +199,13 @@ const HistoryCalendarComponent = ({
         <Flex
           align="center"
           gap={4}
-          style={selectedDate ? { flex: 1, justifyContent: "flex-start" } : undefined}
+          style={
+            selectedDate ? { flex: 1, justifyContent: "flex-start" } : undefined
+          }
         >
-          <View style={[styles.dot, { backgroundColor: THEME.colors.secondary }]} />
+          <View
+            style={[styles.dot, { backgroundColor: THEME.colors.secondary }]}
+          />
           <Text type="labelSm" color="textSecondary">
             Thu:
           </Text>
@@ -230,7 +224,9 @@ const HistoryCalendarComponent = ({
               : { justifyContent: "flex-end" }
           }
         >
-          <View style={[styles.dot, { backgroundColor: THEME.colors.expense }]} />
+          <View
+            style={[styles.dot, { backgroundColor: THEME.colors.expense }]}
+          />
           <Text type="labelSm" color="textSecondary">
             Chi:
           </Text>
@@ -247,7 +243,11 @@ const HistoryCalendarComponent = ({
               style={styles.clearFilterPill}
               activeOpacity={0.7}
             >
-              <Text type="labelSm" color="primary" style={{ fontWeight: "600" }}>
+              <Text
+                type="labelSm"
+                color="primary"
+                style={{ fontWeight: "600" }}
+              >
                 {t("calendar.allMonth")}
               </Text>
               <Ionicons
@@ -309,7 +309,9 @@ const HistoryCalendarComponent = ({
                     style={[
                       styles.dayNumberCircle,
                       isSelected && styles.dayNumberCircleSelected,
-                      item.isToday && !isSelected && styles.dayNumberCircleToday,
+                      item.isToday &&
+                        !isSelected &&
+                        styles.dayNumberCircleToday,
                     ]}
                   >
                     <Text
@@ -318,14 +320,13 @@ const HistoryCalendarComponent = ({
                         item.isFuture
                           ? "textPlaceholder"
                           : isSelected
-                          ? "white"
-                          : item.isToday
-                          ? "primary"
-                          : "text"
+                            ? "white"
+                            : item.isToday
+                              ? "primary"
+                              : "text"
                       }
                       style={{
-                        fontWeight:
-                          isSelected || item.isToday ? "700" : "600",
+                        fontWeight: isSelected || item.isToday ? "700" : "600",
                         fontSize: 13,
                         opacity: item.isFuture ? 0.4 : 1,
                       }}

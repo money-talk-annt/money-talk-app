@@ -1,21 +1,13 @@
-import React, { useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from '../hooks/useTranslation';
-import { useFocusEffect, useScrollToTop } from '@react-navigation/native';
+import { Scroll } from '../components/ScrollView/ScrollView';
 
 export default function Analysis() {
   const { t } = useTranslation('analysis');
-  const scrollRef = useRef<ScrollView>(null);
-  useScrollToTop(scrollRef);
-
-  useFocusEffect(
-    useCallback(() => {
-      scrollRef.current?.scrollTo?.({ y: 0, animated: false });
-    }, []),
-  );
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container}>
+    <Scroll isScreen style={styles.container}>
       <Text style={styles.title}>{t('title')}</Text>
       
       <View style={styles.section}>
@@ -46,7 +38,7 @@ export default function Analysis() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </Scroll>
   );
 }
 

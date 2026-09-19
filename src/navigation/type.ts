@@ -2,7 +2,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 
 export type ProfileStackParamList = {
   Wallet: undefined;
-  AddWallet: undefined;
+  AddWallet: { walletId?: number } | undefined;
   ProfileStack: undefined;
 };
 
@@ -20,8 +20,9 @@ export type RootTabParamList = {
 
 export type RootStackParamList = {
   Home: NavigatorScreenParams<RootTabParamList>;
-  TransactionRoot: undefined;
-  TransactionDetail: undefined;
+  TransactionRoot: { transactionId?: number } | undefined;
+  TransactionDetail: { id: number } | undefined;
+  LocketCamera: undefined;
   Wallet: undefined;
-  AddWallet: undefined;
+  AddWallet: { walletId?: number } | undefined;
 };
