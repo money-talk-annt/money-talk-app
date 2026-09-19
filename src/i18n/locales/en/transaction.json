@@ -30,12 +30,53 @@
   },
   "success": "Transaction saved",
   "failure": "Failed to save transaction",
+  "editTitle": "Edit Transaction",
+  "update": "UPDATE TRANSACTION",
+  "updateSuccess": "Transaction updated successfully",
+  "updateFailure": "Failed to update transaction",
 
   "detail": {
     "title": "Transaction Details",
-    "date": "Date",
+    "date": "Date & Time",
     "wallet": "Wallet",
+    "category": "Category",
+    "type": "Transaction Type",
     "note": "Note",
-    "delete": "Delete"
+    "noNote": "No note provided",
+    "edit": "Edit",
+    "delete": "Delete Transaction",
+    "deleteConfirmTitle": "Confirm Deletion",
+    "deleteConfirmMessage": "The amount will be adjusted/refunded back to the wallet. Are you sure you want to delete this transaction?",
+    "deleteSuccess": "Transaction deleted successfully",
+    "notFound": "Transaction not found"
+  },
+
+  "locket": {
+    "cameraPermissionTitle": "Camera Access Required",
+    "cameraPermissionDesc": "Allow camera access to take photos of your transactions",
+    "allowCamera": "Allow Camera",
+    "cancel": "Cancel",
+    "captureHint": "Take a photo of your transaction",
+    "retake": "Retake",
+    "photoSaveFailed": "Failed to save photo",
+    "amountRequiredTitle": "Amount Required",
+    "amountRequiredMessage": "Please enter an amount for your Locket transaction! ✨",
+    "enterNow": "Enter Now",
+    "squareFrame": "1:1 Viewfinder",
+    "amountIncome": "INCOME AMOUNT",
+    "amountExpense": "EXPENSE AMOUNT",
+    "amountIncomeTitle": "Income Amount",
+    "amountExpenseTitle": "Expense Amount",
+    "notePlaceholder": "Add transaction note...",
+    "framingHint": "Frame your shot & tap to capture",
+    "done": "Done",
+    "tags": {
+      "food": "Food & Drink",
+      "coffee": "Coffee",
+      "transport": "Transport",
+      "shopping": "Shopping",
+      "entertainment": "Entertainment",
+      "bill": "Bills"
+    }
   }
 }

@@ -4,13 +4,15 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Alert } from "react-native";
 import {
   GetTransaction,
   transactionRepo,
 } from "../../database/repository/transaction";
-import { IconName, icons } from "../../assets/icons";
+import { PATHNAME } from "../../constants/pathname";
+import { setSkipScrollToTop } from "../../utils/navigationScrollHelper";
 
 export const useTransactionDetail = () => {
   const { params } =
@@ -25,23 +27,73 @@ export const useTransactionDetail = () => {
     navigation.setOptions({
       title: t("detail.title"),
     });
-  }, []);
+  }, [navigation, t]);
 
   useFocusEffect(
     useCallback(() => {
-      const res = transactionRepo.getById(params?.id);
+      // Mark flag so returning to previous screen (Dashboard or History) will NOT scroll to top
+      setSkipScrollToTop(true);
 
-      setData(res);
-    }, []),
+      if (!params?.id) return;
+      const res = transactionRepo.getById(params.id);
+      if (res) {
+        setData(res);
+      }
+    }, [params?.id]),
   );
 
-  const Icon = useMemo(() => {
-    if (!data) return icons["cash"];
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", () => {
+      setSkipScrollToTop(true);
+    });
+    return () => {
+      setSkipScrollToTop(true);
+      unsubscribe();
+    };
+  }, [navigation]);
 
-    const IconComponent = icons[data.category as IconName];
+  const handleEdit = useCallback(() => {
+    if (!data?.id) return;
+    navigation.navigate(PATHNAME.TRANSACTION_ROOT, { transactionId: data.id });
+  }, [data?.id, navigation]);
 
-    return IconComponent || icons["cash"];
-  }, [data]);
+  const handleDelete = useCallback(() => {
+    if (!data?.id) return;
 
-  return { t, tCommon, data, Icon };
+    Alert.alert(
+      t("detail.deleteConfirmTitle"),
+      t("detail.deleteConfirmMessage"),
+      [
+        {
+          text: tCommon("cancel", "Hủy"),
+          style: "cancel",
+        },
+        {
+          text: t("detail.delete"),
+          style: "destructive",
+          onPress: () => {
+            try {
+              setSkipScrollToTop(true);
+              transactionRepo.deleteWithWalletUpdate(data.id);
+              navigation.goBack();
+            } catch (error) {
+              console.error("Failed to delete transaction:", error);
+            }
+          },
+        },
+      ],
+    );
+  }, [data?.id, t, tCommon, navigation]);
+
+  const isIncome = data?.type === "income";
+
+  return {
+    t,
+    tCommon,
+    data,
+    isIncome,
+    handleEdit,
+    handleDelete,
+    navigation,
+  };
 };

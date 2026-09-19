@@ -4,12 +4,17 @@
   "email": "Email",
   "phone": "Điện thoại",
   "address": "Địa chỉ",
-  "preferences": "Tùy chọn",
+  "preferences": "Tùy chọn & Cài đặt",
   "currency": "Tiền tệ",
   "theme": "Chủ đề",
   "notifications": "Thông báo",
-  "privacy": "Quyền riêng tư",
+  "privacy": "Quyền riêng tư & Bảo mật",
   "logout": "Đăng xuất",
   "account_settings": "Cài đặt tài khoản",
-  "change_password": "Thay đổi mật khẩu"
+  "change_password": "Thay đổi mật khẩu",
+  "manage_wallet": "Quản lý ví",
+  "manage_wallet_desc": "Xem danh sách, thêm, sửa & xóa ví",
+  "app_info": "Thông tin ứng dụng",
+  "version": "Phiên bản",
+  "standard_user": "Người dùng cá nhân"
 }

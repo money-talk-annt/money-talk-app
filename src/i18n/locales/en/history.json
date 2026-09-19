@@ -29,6 +29,8 @@
   },
   "loadingMore": "Loading more transactions...",
   "noMore": "All transactions loaded",
+  "locketPhoto": "📸 Photo",
+  "locketEmpty": "No photo transactions yet",
   "daySummary": {
     "income": "In: +{{amount}}",
     "expense": "Out: -{{amount}}"

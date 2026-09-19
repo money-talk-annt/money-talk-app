@@ -8,6 +8,7 @@ import {
   transactionRepo,
 } from "../../database/repository/transaction";
 import dayjs from "../../utils/dayjs";
+import { setSkipScrollToTop } from "../../utils/navigationScrollHelper";
 
 export type RecentFilterType = "all" | "expense" | "income";
 
@@ -16,7 +17,7 @@ const useDashboard = () => {
   const { t: tCommon } = useTranslation("common");
   const navigation = useNavigation<AppNavigation>();
 
-  const [isBalanceVisible, setIsBalanceVisible] = useState(true);
+  const [isBalanceVisible, setIsBalanceVisible] = useState(false);
   const [recentFilter, setRecentFilter] = useState<RecentFilterType>("all");
   const [wallets, setWallets] = useState<GetWallet[]>([]);
   const [transactions, setTransactions] = useState<GetTransaction[]>([]);
@@ -61,6 +62,7 @@ const useDashboard = () => {
 
   useFocusEffect(
     useCallback(() => {
+      setIsBalanceVisible(false);
       loadData();
     }, [loadData]),
   );
@@ -110,6 +112,7 @@ const useDashboard = () => {
 
   const handleClickTransaction = useCallback(
     (id: number) => {
+      setSkipScrollToTop(true);
       (navigation as any).navigate("TransactionDetail", { id });
     },
     [navigation],

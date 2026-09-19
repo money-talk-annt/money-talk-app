@@ -7,6 +7,7 @@ import Wallet from "../screens/Wallet";
 import AddWallet from "../screens/AddWallet";
 import HeaderRight from "../components/HeaderRight";
 import { PATHNAME } from "../constants/pathname";
+import { LocketCamera } from "../screens/Transaction/LocketCamera";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>({
   screens: {
@@ -26,6 +27,14 @@ const RootStack = createNativeStackNavigator<RootStackParamList>({
       screen: TransactionDetail,
       options: {
         headerBackButtonDisplayMode: "minimal",
+      },
+    },
+    LocketCamera: {
+      screen: LocketCamera,
+      options: {
+        presentation: "fullScreenModal",
+        headerShown: false,
+        animation: "slide_from_bottom",
       },
     },
     Wallet: {

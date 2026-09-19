@@ -7,6 +7,7 @@ export type Transaction = {
   amount: number;
   category: string;
   note?: string;
+  image_uri?: string;
   transaction_date?: string;
   created_at: string;
   updated_at: string;
@@ -14,10 +15,12 @@ export type Transaction = {
 
 export type GetTransaction = {
   id: number;
+  wallet_id?: number;
   type: "income" | "expense";
   amount: number;
   category: string;
   note?: string;
+  image_uri?: string;
   transactionDate?: string;
   walletName?: string;
 };
@@ -32,8 +35,8 @@ class TransactionRepository {
     try {
       const result = db.runSync(
         `
-        INSERT INTO transactions (wallet_id, type, amount, category, note, transaction_date)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO transactions (wallet_id, type, amount, category, note, transaction_date, image_uri)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
         [
           data.wallet_id,
@@ -42,6 +45,7 @@ class TransactionRepository {
           data.category,
           data.note || null,
           data.transaction_date || null,
+          data.image_uri || null,
         ],
       );
       return result.lastInsertRowId;
@@ -59,8 +63,8 @@ class TransactionRepository {
       db.withTransactionSync(() => {
         const res = db.runSync(
           `
-          INSERT INTO transactions (wallet_id, type, amount, category, note, transaction_date)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO transactions (wallet_id, type, amount, category, note, transaction_date, image_uri)
+          VALUES (?, ?, ?, ?, ?, ?, ?)
           `,
           [
             data.wallet_id,
@@ -69,6 +73,7 @@ class TransactionRepository {
             data.category,
             data.note || null,
             data.transaction_date || null,
+            data.image_uri || null,
           ],
         );
 
@@ -122,17 +127,18 @@ class TransactionRepository {
 
   getById(id: number): GetTransaction | null {
     try {
-      const result = db.getFirstSync<Transaction>(
+      const result = db.getFirstSync<GetTransaction>(
         `
-        SELECT T.id AS id, type, amount, category, note, transaction_date AS transactionDate, 
-        wallets.name AS walletName
+        SELECT T.id AS id, T.wallet_id AS wallet_id, type, amount, category, note, T.image_uri AS image_uri,
+        transaction_date AS transactionDate, 
+        COALESCE(wallets.name, '') AS walletName
         FROM transactions T
-        INNER JOIN wallets ON T.wallet_id = wallets.id
+        LEFT JOIN wallets ON T.wallet_id = wallets.id
         WHERE T.id = ? AND T.deleted_at IS NULL
         `,
         [id],
       );
-      return result as GetTransaction | null;
+      return result || null;
     } catch (error) {
       console.error("Failed to get transaction:", error);
       return null;
@@ -180,6 +186,69 @@ class TransactionRepository {
     }
   }
 
+  updateWithWalletUpdate(id: number, data: CreateTransactionInput) {
+    try {
+      db.withTransactionSync(() => {
+        const oldTx = db.getFirstSync<Transaction>(
+          `SELECT * FROM transactions WHERE id = ? AND deleted_at IS NULL`,
+          [id],
+        );
+
+        if (!oldTx) {
+          throw new Error("Transaction not found");
+        }
+
+        // Old effect on oldTx.wallet_id:
+        // If oldTx was expense, it deducted oldTx.amount (-oldTx.amount).
+        // If oldTx was income, it added oldTx.amount (+oldTx.amount).
+        const oldDelta = oldTx.type === "expense" ? -oldTx.amount : oldTx.amount;
+        const newDelta = data.type === "expense" ? -data.amount : data.amount;
+
+        if (oldTx.wallet_id === data.wallet_id) {
+          // Same wallet: apply difference
+          const diff = newDelta - oldDelta;
+          if (diff !== 0) {
+            db.runSync(`UPDATE wallets SET balance = balance + ? WHERE id = ?`, [
+              diff,
+              data.wallet_id,
+            ]);
+          }
+        } else {
+          // Changed wallet: revert from old wallet, apply to new wallet
+          db.runSync(`UPDATE wallets SET balance = balance - ? WHERE id = ?`, [
+            oldDelta,
+            oldTx.wallet_id,
+          ]);
+          db.runSync(`UPDATE wallets SET balance = balance + ? WHERE id = ?`, [
+            newDelta,
+            data.wallet_id,
+          ]);
+        }
+
+        db.runSync(
+          `
+          UPDATE transactions
+          SET wallet_id = ?, type = ?, amount = ?, category = ?, note = ?, transaction_date = ?, image_uri = ?, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ?
+          `,
+          [
+            data.wallet_id,
+            data.type,
+            data.amount,
+            data.category,
+            data.note || null,
+            data.transaction_date || null,
+            data.image_uri || null,
+            id,
+          ],
+        );
+      });
+    } catch (error) {
+      console.error("Failed to update transaction with wallet update:", error);
+      throw error;
+    }
+  }
+
   delete(id: number) {
     try {
       db.runSync(
@@ -192,6 +261,39 @@ class TransactionRepository {
       );
     } catch (error) {
       console.error("Failed to delete transaction:", error);
+      throw error;
+    }
+  }
+
+  deleteWithWalletUpdate(id: number) {
+    try {
+      db.withTransactionSync(() => {
+        const tx = db.getFirstSync<Transaction>(
+          `SELECT * FROM transactions WHERE id = ? AND deleted_at IS NULL`,
+          [id],
+        );
+
+        if (!tx) {
+          return;
+        }
+
+        // Reverting the transaction:
+        // If expense was -amount, deleting it refunds +amount.
+        // If income was +amount, deleting it deducts -amount.
+        const refundDelta = tx.type === "expense" ? tx.amount : -tx.amount;
+
+        db.runSync(`UPDATE wallets SET balance = balance + ? WHERE id = ?`, [
+          refundDelta,
+          tx.wallet_id,
+        ]);
+
+        db.runSync(
+          `UPDATE transactions SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?`,
+          [id],
+        );
+      });
+    } catch (error) {
+      console.error("Failed to delete transaction with wallet update:", error);
       throw error;
     }
   }
@@ -263,11 +365,11 @@ class TransactionRepository {
         : `transactions.${sortBy}`;
 
     const query = `
-        SELECT transactions.id AS id, type, amount, category, note, 
+        SELECT transactions.id AS id, type, amount, category, note, transactions.image_uri AS image_uri,
         COALESCE(transactions.transaction_date, transactions.created_at) AS transactionDate, 
-        wallets.name AS walletName
+        COALESCE(wallets.name, '') AS walletName
         FROM transactions
-        INNER JOIN wallets ON transactions.wallet_id = wallets.id
+        LEFT JOIN wallets ON transactions.wallet_id = wallets.id
         WHERE ${conditions.join(" AND ")}
         ORDER BY ${orderExpr} ${sortOrder}
         LIMIT ? OFFSET ?
@@ -366,6 +468,47 @@ class TransactionRepository {
       console.error("Failed to get daily summary by month:", error);
       return {};
     }
+  }
+  getLocketTransactions({
+    page = 1,
+    pageSize = 20,
+    datePrefix,
+  }: {
+    page?: number;
+    pageSize?: number;
+    datePrefix?: string;
+  } = {}): GetTransaction[] {
+    const conditions: string[] = [
+      "transactions.deleted_at IS NULL",
+      "transactions.image_uri IS NOT NULL",
+    ];
+    const params: (string | number)[] = [];
+
+    if (datePrefix) {
+      conditions.push(
+        "SUBSTR(COALESCE(transactions.transaction_date, transactions.created_at), 1, ?) = ?",
+      );
+      params.push(datePrefix.length);
+      params.push(datePrefix);
+    }
+
+    const offset = (page - 1) * pageSize;
+
+    const query = `
+      SELECT transactions.id AS id, type, amount, category, note, transactions.image_uri AS image_uri,
+      COALESCE(transactions.transaction_date, transactions.created_at) AS transactionDate,
+      COALESCE(wallets.name, '') AS walletName
+      FROM transactions
+      LEFT JOIN wallets ON transactions.wallet_id = wallets.id
+      WHERE ${conditions.join(" AND ")}
+      ORDER BY COALESCE(transactions.transaction_date, transactions.created_at) DESC
+      LIMIT ? OFFSET ?
+    `;
+
+    params.push(pageSize);
+    params.push(offset);
+
+    return db.getAllSync(query, params);
   }
 }
 

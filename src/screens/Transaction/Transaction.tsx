@@ -22,6 +22,7 @@ const TransactionScreen = () => {
   const {
     t,
     type,
+    isEditMode,
     wallets,
     tabItems,
     control,
@@ -211,7 +212,7 @@ const TransactionScreen = () => {
           </Box>
 
           <Button
-            title={t("save")}
+            title={isEditMode ? t("update") : t("save")}
             disabled={!isValid}
             onPress={handleSubmitTransaction}
           />

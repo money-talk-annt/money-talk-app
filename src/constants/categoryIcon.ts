@@ -41,4 +41,5 @@ export const I18N_CATEGORY_KEY = {
   pc: "categories.pc",
   bank: "categories.bank",
   sale: "categories.sale",
+  locket: "categories.locket",
 };

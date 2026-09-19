@@ -4,12 +4,17 @@
   "email": "Email",
   "phone": "Phone",
   "address": "Address",
-  "preferences": "Preferences",
+  "preferences": "Preferences & Settings",
   "currency": "Currency",
   "theme": "Theme",
   "notifications": "Notifications",
-  "privacy": "Privacy",
+  "privacy": "Privacy & Security",
   "logout": "Logout",
   "account_settings": "Account Settings",
-  "change_password": "Change Password"
+  "change_password": "Change Password",
+  "manage_wallet": "Manage Wallets",
+  "manage_wallet_desc": "View all wallets, add, edit & delete",
+  "app_info": "App Information",
+  "version": "Version",
+  "standard_user": "Personal Account"
 }

@@ -1,5 +1,14 @@
 {
   "title": "Wallet",
   "total": "Total Assets",
-  "allWallet": "All Wallets"
+  "allWallet": "All Wallets",
+  "edit_wallet": "Edit Wallet",
+  "delete_wallet": "Delete Wallet",
+  "delete_confirm_title": "Confirm Delete Wallet",
+  "delete_confirm_desc": "The balance of {{amount}} and all transactions will be transferred to '{{targetWallet}}'. Are you sure you want to delete '{{walletName}}'?",
+  "delete_success": "Wallet deleted successfully",
+  "cannot_delete_last_title": "Cannot Delete",
+  "cannot_delete_last_desc": "The app requires at least 1 active wallet. You cannot delete the only wallet.",
+  "cancel": "Cancel",
+  "delete": "Delete"
 }

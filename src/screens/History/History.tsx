@@ -1,6 +1,7 @@
-import { memo } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   RefreshControl,
   SafeAreaView,
   SectionList,
@@ -9,6 +10,7 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect, useScrollToTop } from "@react-navigation/native";
 import { THEME } from "../../theme";
 import Box from "../../components/Box";
 import Flex from "../../components/Flex/Flex";
@@ -19,40 +21,10 @@ import { useHistory } from "./useHistory";
 import { FilterType, TransactionGroup } from "./type";
 import { GetTransaction } from "../../database/repository/transaction";
 import { HistoryCalendar } from "./components/HistoryCalendar";
+import { LocketGrid } from "./components/LocketGrid";
 import dayjs from "../../utils/dayjs";
-
-const getCategoryIconName = (category: string) => {
-  switch (category?.toLowerCase()) {
-    case "food":
-      return "fast-food-outline";
-    case "car":
-      return "car-sport-outline";
-    case "bag":
-      return "bag-handle-outline";
-    case "home":
-      return "home-outline";
-    case "health":
-      return "fitness-outline";
-    case "coffee":
-      return "cafe-outline";
-    case "cash":
-      return "cash-outline";
-    case "gift":
-      return "gift-outline";
-    case "bank":
-      return "business-outline";
-    case "sale":
-      return "pricetag-outline";
-    case "pc":
-      return "laptop-outline";
-    case "refund":
-      return "arrow-undo-outline";
-    case "trending":
-      return "trending-up-outline";
-    default:
-      return "receipt-outline";
-  }
-};
+import { IconName, icons } from "../../assets/icons";
+import { checkAndResetSkipScrollToTop } from "../../utils/navigationScrollHelper";
 
 const HistoryScreen = () => {
   const {
@@ -81,7 +53,33 @@ const HistoryScreen = () => {
     handleToggleCalendarExpand,
     handleTransactionPress,
     handleAddTransaction,
+    viewMode,
+    locketTransactions,
+    groupedLocketTransactions,
+    locketHasMore,
+    locketIsLoadingMore,
+    handleToggleViewMode,
+    handleLocketEndReached,
+    formatCurrencyHistory,
   } = useHistory();
+
+  const listRef = useRef<any>(null);
+  useScrollToTop(listRef);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (checkAndResetSkipScrollToTop()) return;
+
+      const list = listRef.current as any;
+      if (!list) return;
+
+      if (typeof list.scrollToOffset === "function") {
+        list.scrollToOffset({ offset: 0, animated: false });
+      } else if (typeof list.getScrollResponder === "function") {
+        list.getScrollResponder()?.scrollTo?.({ y: 0, animated: false });
+      }
+    }, []),
+  );
 
   const filterTabs: {
     type: FilterType;
@@ -93,11 +91,7 @@ const HistoryScreen = () => {
     { type: "expense", label: t("expense"), icon: "arrow-up-circle-outline" },
   ];
 
-  const renderSectionHeader = ({
-    section,
-  }: {
-    section: TransactionGroup;
-  }) => {
+  const renderSectionHeader = ({ section }: { section: TransactionGroup }) => {
     return (
       <View style={styles.sectionHeaderContainer}>
         <View style={styles.sectionHeaderBadge}>
@@ -130,9 +124,14 @@ const HistoryScreen = () => {
 
   const renderItem = ({ item }: { item: GetTransaction }) => {
     const isIncome = item.type === "income";
+    const isLocket = Boolean(item.image_uri);
     const categoryKey = mapI18n(item.category);
-    const categoryName = categoryKey ? tCommon(categoryKey) : item.category;
-    const iconName = getCategoryIconName(item.category);
+    const categoryName = isLocket
+      ? item.note || t("locketPhoto")
+      : categoryKey
+        ? tCommon(categoryKey)
+        : item.category;
+    const ComponentIcon = icons[(item.category || "cash") as IconName];
     const timeFormatted = item.transactionDate
       ? dayjs(item.transactionDate).format("HH:mm")
       : "";
@@ -147,24 +146,31 @@ const HistoryScreen = () => {
           <Flex align="center" justify="space-between" gap={8}>
             {/* Left info */}
             <Flex align="center" gap={12} style={{ flex: 1 }}>
-              <View
-                style={[
-                  styles.iconWrapper,
-                  {
-                    backgroundColor: isIncome
-                      ? THEME.colors.bgSecondary
-                      : THEME.colors.bgPrimary,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name={iconName as any}
-                  size={24}
-                  color={
-                    isIncome ? THEME.colors.secondary : THEME.colors.primary
-                  }
+              {isLocket && item.image_uri ? (
+                <Image
+                  source={{ uri: item.image_uri }}
+                  style={styles.locketThumbnail}
                 />
-              </View>
+              ) : (
+                <View
+                  style={[
+                    styles.iconWrapper,
+                    {
+                      backgroundColor: isIncome
+                        ? THEME.colors.bgSecondary
+                        : THEME.colors.bgPrimary,
+                    },
+                  ]}
+                >
+                  <ComponentIcon
+                    height={24}
+                    width={24}
+                    color={
+                      isIncome ? THEME.colors.secondary : THEME.colors.primary
+                    }
+                  />
+                </View>
+              )}
 
               <View style={{ flex: 1 }}>
                 <Text
@@ -235,7 +241,11 @@ const HistoryScreen = () => {
       return (
         <View style={styles.footerContainer}>
           <View style={styles.footerDot} />
-          <Text type="labelSm" color="textSecondary" style={{ marginHorizontal: 8 }}>
+          <Text
+            type="labelSm"
+            color="textSecondary"
+            style={{ marginHorizontal: 8 }}
+          >
             {t("noMore")}
           </Text>
           <View style={styles.footerDot} />
@@ -283,11 +293,22 @@ const HistoryScreen = () => {
   const renderListHeader = () => {
     return (
       <View>
-        {/* Top Header Title */}
+        {/* Top Header Title + View Toggle */}
         <View style={styles.header}>
           <Text type="headlineLg" color="text">
             {t("title")}
           </Text>
+          <TouchableOpacity
+            onPress={handleToggleViewMode}
+            style={styles.viewToggle}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={viewMode === "list" ? "grid-outline" : "list-outline"}
+              size={20}
+              color={THEME.colors.primary}
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Overview Statistics Card */}
@@ -306,7 +327,7 @@ const HistoryScreen = () => {
                 </Text>
               </Flex>
               <Text type="bodyMdBold" color="secondary" numberOfLines={1}>
-                +{formatCurrency(summary.totalIncome)}
+                +{formatCurrencyHistory(summary.totalIncome)}
               </Text>
             </View>
 
@@ -325,7 +346,7 @@ const HistoryScreen = () => {
                 </Text>
               </Flex>
               <Text type="bodyMdBold" color="expense" numberOfLines={1}>
-                -{formatCurrency(summary.totalExpense)}
+                -{formatCurrencyHistory(summary.totalExpense)}
               </Text>
             </View>
 
@@ -348,7 +369,7 @@ const HistoryScreen = () => {
                 color={summary.net >= 0 ? "primary" : "expense"}
                 numberOfLines={1}
               >
-                {formatCurrency(summary.net)}
+                {formatCurrencyHistory(summary.net)}
               </Text>
             </View>
           </Flex>
@@ -380,10 +401,7 @@ const HistoryScreen = () => {
                 key={item.type}
                 activeOpacity={0.7}
                 onPress={() => handleSelectFilter(item.type)}
-                style={[
-                  styles.filterTab,
-                  isActive && styles.filterTabActive,
-                ]}
+                style={[styles.filterTab, isActive && styles.filterTabActive]}
               >
                 <Ionicons
                   name={item.icon}
@@ -409,28 +427,49 @@ const HistoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Main Paginated Section List with Header */}
-      <SectionList
-        sections={groupedTransactions}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-        stickySectionHeadersEnabled={false}
-        contentContainerStyle={styles.listContent}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.3}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor={THEME.colors.primary}
-            colors={[THEME.colors.primary]}
-          />
-        }
-        ListHeaderComponent={renderListHeader}
-        ListEmptyComponent={renderEmpty}
-        ListFooterComponent={renderFooter}
-      />
+      {viewMode === "grid" ? (
+        <LocketGrid
+          sections={groupedLocketTransactions}
+          isLoadingMore={locketIsLoadingMore}
+          hasMore={locketHasMore}
+          onEndReached={handleLocketEndReached}
+          onTransactionPress={handleTransactionPress}
+          renderEmpty={renderEmpty}
+          renderSectionHeader={renderSectionHeader}
+          ListHeaderComponent={renderListHeader}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor={THEME.colors.primary}
+              colors={[THEME.colors.primary]}
+            />
+          }
+        />
+      ) : (
+        <SectionList
+          ref={listRef}
+          sections={groupedTransactions}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={renderItem}
+          renderSectionHeader={renderSectionHeader}
+          stickySectionHeadersEnabled={false}
+          contentContainerStyle={styles.listContent}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.3}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+              tintColor={THEME.colors.primary}
+              colors={[THEME.colors.primary]}
+            />
+          }
+          ListHeaderComponent={renderListHeader}
+          ListEmptyComponent={renderEmpty}
+          ListFooterComponent={renderFooter}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -444,6 +483,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  viewToggle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: THEME.colors.bgPrimary,
+    alignItems: "center",
+    justifyContent: "center",
   },
   summaryCard: {
     marginHorizontal: 20,
@@ -543,6 +593,11 @@ const styles = StyleSheet.create({
     borderRadius: THEME.radius.full,
     alignItems: "center",
     justifyContent: "center",
+  },
+  locketThumbnail: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
   },
   walletPill: {
     backgroundColor: THEME.colors.bgPrimary,
